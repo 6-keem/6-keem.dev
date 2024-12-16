@@ -47,10 +47,11 @@ const parsePostDetail = async (postPath: string) => {
     const { data, content } = matter(file);
     const grayMatter = data as PostMatter;
     const readingMinutes = Math.ceil(readingTime(content).minutes);
+    const uniqueKey = `${postPath}-${grayMatter.date}`;
     const dateString = dayjs(grayMatter.date)
         .locale("ko")
         .format("YYYY년 MM월 DD일");
-    return { ...grayMatter, dateString, content, readingMinutes };
+    return { ...grayMatter, uniqueKey, dateString, content, readingMinutes };
 };
 
 // category folder name을 public name으로 변경 : dir_name -> Dir Name
@@ -81,7 +82,7 @@ export const getSortedPostList = async (category?: string) => {
 
 export const getSitemapPostList = async () => {
     const postList = await getPostList();
-    const baseUrl = "https://www.d5br5.dev";
+    const baseUrl = "https://6-keem.dev";
     const sitemapPostList = postList.map(({ url }) => ({
         lastModified: new Date(),
         url: `${baseUrl}${url}`,
@@ -115,7 +116,6 @@ export const getCategoryDetailList = async () => {
             count,
         })
     );
-
     return detailList;
 };
 

@@ -17,9 +17,8 @@ export function generateStaticParams() {
     return paramList;
 }
 
-export async function generateMetadata({
-    params: { category },
-}: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { category } = await params;
     const cg = getCategoryPublicName(category);
     const title = `${cg} | ${blogName}`;
     const url = `${baseDomain}/${category}`;
@@ -39,7 +38,8 @@ export async function generateMetadata({
 }
 
 const CategoryPage = async ({ params }: Props) => {
-    return <PostListPage category={params.category} />;
+    const { category } = await params;
+    return <PostListPage category={category} />;
 };
 
 export default CategoryPage;

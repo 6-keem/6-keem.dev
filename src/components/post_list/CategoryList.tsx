@@ -21,25 +21,27 @@ interface CategoryListProps {
 const CategoryList = ({
     categoryList,
     allPostCount,
-    currentCategory = "all",
+    currentCategory = "All",
 }: CategoryListProps) => {
-    const router = useRouter();
-
-    const onCategoryChange = (value: string) => {
-        if (value === "all") {
-            router.push("/blog");
-        } else {
-            router.push(`/blog/${value}`);
-        }
-    };
-
     return (
         <>
+            <section className="flex flex-col items-center justify-center mb-8">
+                <div className="text-4xl font-bold mb-2">{`${currentCategory}`}</div>
+                <div className="text-2xl">{`
+                ${
+                    currentCategory === "All"
+                        ? allPostCount
+                        : categoryList.find(
+                              (category) => category.dirName === currentCategory
+                          )?.count || 0
+                } posts`}</div>
+            </section>
+
             <section className="mb-10 hidden sm:block">
                 <ul className="flex gap-3">
                     <CategoryButton
                         href="/blog"
-                        isCurrent={currentCategory === "all"}
+                        isCurrent={currentCategory === "All"}
                         displayName="All"
                         count={allPostCount}
                     />
@@ -53,26 +55,6 @@ const CategoryList = ({
                         />
                     ))}
                 </ul>
-            </section>
-            <section className="mb-10 sm:hidden">
-                <Select
-                    onValueChange={onCategoryChange}
-                    defaultValue={currentCategory}
-                >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Theme" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">
-                            All ({allPostCount})
-                        </SelectItem>
-                        {categoryList.map((cg) => (
-                            <SelectItem key={cg.dirName} value={cg.dirName}>
-                                {cg.publicName} ({cg.count})
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
             </section>
         </>
     );

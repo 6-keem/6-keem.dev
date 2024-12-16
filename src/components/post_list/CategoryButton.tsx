@@ -9,19 +9,15 @@ interface Props {
     count: number;
 }
 
-export const CategoryButton = ({
-    isCurrent,
-    displayName,
-    href,
-    count,
-}: Props) => {
+export const CategoryButton = ({ isCurrent, displayName, href }: Props) => {
+    const textColor = isCurrent ? "text-text-selected" : "text-text-unselected";
     return (
         <li>
-            <Button asChild size="sm" variant={isCurrent ? "default" : "ghost"}>
-                <Link href={href}>
-                    {displayName} ({count})
+            <div className="">
+                <Link href={href} className={`text-2xl ${textColor}`}>
+                    {displayName}
                 </Link>
-            </Button>
+            </div>
         </li>
     );
 };
