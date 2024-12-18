@@ -34,6 +34,10 @@ const config = {
                     DEFAULT: "var(--secondary)",
                     foreground: "var(--secondary-foreground)",
                 },
+                textSecondary: {
+                    DEFAULT: "var(--text-secondary)",
+                    foreground: "var(--text-secondary)",
+                },
                 destructive: {
                     DEFAULT: "var(--destructive)",
                     foreground: "var(--destructive-foreground)",
@@ -195,6 +199,10 @@ const config = {
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+            },
+            aspectRatio: {
+                "4/3": "4 / 3",
+                "2/1": "2 / 1",
             },
         },
     },
