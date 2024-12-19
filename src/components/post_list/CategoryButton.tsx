@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { Button } from "../ui/button";
-
 interface Props {
     isCurrent: boolean;
     displayName: string;
@@ -14,8 +12,8 @@ export const CategoryButton = ({ isCurrent, displayName, href }: Props) => {
     return (
         <li>
             <div className="">
-                <Link href={href} className={`text-2xl ${textColor}`}>
-                    {displayName}
+                <Link href={href} className={`text-xl ${textColor}`}>
+                    <span className="font-normal">{displayName}</span>
                 </Link>
             </div>
         </li>

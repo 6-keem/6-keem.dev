@@ -1,11 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { ProgressBar } from "./ProgressBar";
+import { NavbarContent } from "./NavbarContent";
+import { useScroll } from "../provider/ScrollProvider";
+export enum RootPathType {
+    "blog",
+    "about",
+    "gallery",
+}
+
 export const Navbar = () => {
+    const { progress, navTopMargin } = useScroll();
     return (
-        <section className="w-full">
-            <div className="w-full flex justify-between">
-                <div className="ml-8">나는 좌파임 ㅋ</div>
-                <div className="mr-8">나는 우파임 ㅋ</div>
-            </div>
-            <hr className="mt-5" />
-        </section>
+        <>
+            <ProgressBar progress={`${progress}`} />
+            <nav
+                className={`fixed top-0 pt-1H z-20 flex w-full flex-col items-center justify-center border-b bg-background shadow-sm print:hidden`}
+                style={{ marginTop: `${navTopMargin}px` }}
+            >
+                <NavbarContent />
+            </nav>
+        </>
     );
 };
