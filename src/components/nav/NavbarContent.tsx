@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import LanguageSelector from "../about/language-selector";
 
 export const NavbarContent = () => {
     const pathname = usePathname();
@@ -13,6 +14,11 @@ export const NavbarContent = () => {
         { path: "/about", label: "About" },
         { path: "/gallery", label: "Gallery" },
     ];
+
+    const localePathList = ["/about"];
+    const isLocalePath = localePathList.some((path) =>
+        pathname.startsWith(path)
+    );
 
     return (
         <div className="flex h-[64px] w-full max-w-[1200px] items-center justify-between px-4">
@@ -40,6 +46,9 @@ export const NavbarContent = () => {
                 ))}
             </div>
             <div className="flex items-center">
+                {isLocalePath && (
+                    <LanguageSelector className="hidden sm:flex" />
+                )}
                 <ThemeToggle />
                 <Link href={"https://github.com/6-keem/"}>
                     <Button
