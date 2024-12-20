@@ -14,11 +14,13 @@ const PROJECT_CAREER_PATH = path.join(process.cwd(), CAREER_PATH);
 const monthFormat = {
     en: "MMMM, yyyy",
     ko: "yyyy년 M월",
+    jp: "yyyy年 M月",
 };
 
 const presentLang = {
     en: "present",
     ko: "현재",
+    jp: "現在",
 };
 
 // 모든 MDX 파일 조회

@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { usePathname, useRouter } from "next/navigation";
-
 import * as S from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { GlobeIcon } from "lucide-react";
@@ -19,22 +17,22 @@ export default function LanguageSelector({
 
     const isKo = pathname.endsWith("/ko");
     const isEn = pathname.endsWith("/en");
+    const isJp = pathname.endsWith("/jp");
 
     // useEffect only runs on the client, so now we can safely show the UI
     useEffect(() => {
         setMounted(true);
     }, []);
 
+    // Ensure that the component does not render until mounted is true
     if (!mounted) {
         return null;
     }
 
     const onSelectChange = (value: string) => {
-        if (value === "ko") {
-            router.push(pathname.replace(/\/en$/, "/ko"));
-        } else {
-            router.push(pathname.replace(/\/ko$/, "/en"));
-        }
+        const localePattern = /\/(ko|en|jp)$/;
+        const newPath = pathname.replace(localePattern, `/${value}`);
+        router.push(newPath);
     };
 
     return (
@@ -54,6 +52,14 @@ export default function LanguageSelector({
                 >
                     한국어
                 </S.SelectItem>
+                <S.SelectItem
+                    className="flex justify-between"
+                    disabled={isJp}
+                    value="jp"
+                >
+                    日本語
+                </S.SelectItem>
+
                 <S.SelectItem
                     className="flex justify-between"
                     disabled={isEn}
