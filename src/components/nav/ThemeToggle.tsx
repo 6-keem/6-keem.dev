@@ -15,6 +15,12 @@ export const ThemeToggle = () => {
     const [mounted, setMounted] = useState(false);
     const [popoverOpen, setPopoverOpen] = useState(false);
 
+    const themes = [
+        { id: "light", label: "Light", icon: <Sun /> },
+        { id: "dark", label: "Dark", icon: <Moon /> },
+        { id: "system", label: "System", icon: <Monitor /> },
+    ];
+
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -46,29 +52,23 @@ export const ThemeToggle = () => {
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-36 p-0">
                 <div className="grid grid-cols-1 gap-1 p-1">
-                    <Button
-                        className="justify-start"
-                        variant={"ghost"}
-                        onClick={() => setTheme("light")}
-                    >
-                        <Sun /> Light
-                    </Button>
-                    <Button
-                        className="justify-start"
-                        variant={"ghost"}
-                        onClick={() => setTheme("dark")}
-                    >
-                        <Moon /> Dark
-                    </Button>
-                    <Button
-                        className="justify-start"
-                        variant={"ghost"}
-                        onClick={() => setTheme("system")}
-                    >
-                        <Monitor /> System
-                    </Button>
+                    {themes.map((item) => (
+                        <Button
+                            key={item.id}
+                            className={`flex justify-between w-full items-center`}
+                            variant={"ghost"}
+                            onClick={() => setTheme(item.id)}
+                        >
+                            <div className="flex items-center">
+                                {item.icon}&nbsp;&nbsp;{item.label}
+                            </div>
+                            {theme === item.id && (
+                                <span className="rounded-full bg-sky-500 p-1 ml-2"></span>
+                            )}
+                        </Button>
+                    ))}
                 </div>
             </PopoverContent>
         </Popover>

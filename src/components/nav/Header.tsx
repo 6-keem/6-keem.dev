@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ProgressBar } from "./ProgressBar";
 import { NavbarContent } from "./NavbarContent";
 import { useScroll } from "../provider/ScrollProvider";
+import { usePathname } from "next/navigation";
 export enum RootPathType {
     "blog",
     "about",
     "gallery",
 }
 
-export const Navbar = () => {
+export const Header = () => {
     const { progress, navTopMargin } = useScroll();
     return (
         <>
