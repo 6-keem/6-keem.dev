@@ -19,9 +19,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { category } = await params;
-    const cg = getCategoryPublicName(category);
+
+    const decodedCategory = decodeURIComponent(category);
+    const cg = getCategoryPublicName(decodedCategory);
     const title = `${cg} | ${blogName}`;
-    const url = `${baseDomain}/${category}`;
+    const url = `${baseDomain}/${decodedCategory}`;
 
     return {
         title,
@@ -39,7 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const CategoryPage = async ({ params }: Props) => {
     const { category } = await params;
-    return <PostListPage category={category} />;
+    const decodedCategory = decodeURIComponent(category);
+    return <PostListPage category={decodedCategory} />;
 };
 
 export default CategoryPage;
