@@ -1,24 +1,16 @@
 import { PostBody } from "@/components/post_detail/PostBody";
 import { PostHeader } from "@/components/post_detail/PostHeader";
 import TocContent from "@/components/toc/TocContentSidebar";
-import {
-    getPostDetail,
-    getPostPaths,
-    parsePostAbstract,
-    parseToc,
-} from "@/lib/post";
+import { getPostDetail, parseToc } from "@/lib/post";
 
-type Props = {
-    params: {
-        category: string;
-        slug: string;
-    };
-};
+type Props = Promise<{
+    category: string;
+    slug: string;
+}>;
 
-const PostDetail = async ({ params }: Props) => {
-    const param = await params;
-    const category = param.category;
-    const slug = param.slug;
+const PostDetail = async ({ params }: { params: Props }) => {
+    const category = (await params).category;
+    const slug = (await params).slug;
 
     const post = await getPostDetail(category, slug);
     const toc = parseToc(post.content);

@@ -1,7 +1,5 @@
 import { Post } from "@/config/types";
-import { MDXRemote } from "next-mdx-remote/rsc"; // MDXRemote 컴포넌트
-
-// @ts-expect-error no types
+import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";

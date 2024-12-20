@@ -24,21 +24,29 @@ export const NavbarContent = () => {
         <div className="flex h-[64px] w-full max-w-[1200px] items-center justify-between px-4">
             <div className="flex space-x-2">
                 {navItems.map((item) => (
-                    <Link href={item.path} key={item.path}>
+                    <Link
+                        href={currentPath !== item.path ? item.path : "#"}
+                        key={item.path}
+                        onClick={(e) => {
+                            if (currentPath === item.path) {
+                                e.preventDefault();
+                            }
+                        }}
+                    >
                         <div
                             className={`
-                                rounded-full px-4 py-1 text-center text-xs transition-colors md:text-sm
-                                ${
-                                    currentPath === item.path
-                                        ? "bg-secondary text-text-selected"
-                                        : "text-text-unselected hover:text-text-selected"
-                                }
-                                ${
-                                    currentPath === item.path
-                                        ? "dark:bg-secondary dark:text-text-selected"
-                                        : "dark:text-text-unselected dark:hover:text-text-selected"
-                                }
-                            `}
+            rounded-full px-4 py-1 text-center text-xs transition-colors md:text-sm
+            ${
+                currentPath === item.path
+                    ? "bg-secondary text-text-selected"
+                    : "text-text-unselected hover:text-text-selected"
+            }
+            ${
+                currentPath === item.path
+                    ? "dark:bg-secondary dark:text-text-selected"
+                    : "dark:text-text-unselected dark:hover:text-text-selected"
+            }
+        `}
                         >
                             <span className="font-bold">{item.label}</span>
                         </div>

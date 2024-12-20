@@ -6,6 +6,8 @@ import { ScrollProvider } from "@/components/provider/ScrollProvider";
 import { GlowBackground } from "@/components/GlowBackground";
 import { Metadata } from "next";
 import { baseDomain, blogName, blogThumbnailURL } from "@/config/const";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export async function generateMetadata(): Promise<Metadata> {
     const title = blogName;
@@ -45,10 +47,12 @@ export default function RootLayout({
                 <MyThemeProvider>
                     <ScrollProvider>
                         <Header />
-                        <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative overflow-hidden">
-                            <GlowBackground />
-                            {children}
-                        </main>
+                        <Suspense fallback={<Loading />}>
+                            <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative overflow-hidden">
+                                {children}
+                                <GlowBackground />
+                            </main>
+                        </Suspense>
                         <Footer />
                     </ScrollProvider>
                 </MyThemeProvider>
