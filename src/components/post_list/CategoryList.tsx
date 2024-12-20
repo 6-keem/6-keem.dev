@@ -1,8 +1,4 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-
-import { CategoryButton } from "./CategoryButton";
 import {
     Select,
     SelectContent,
@@ -10,7 +6,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { CategoryButton } from "./CategoryButton";
 import { CategoryDetail } from "@/config/types";
+import { useRouter } from "next/navigation";
 
 interface CategoryListProps {
     categoryList: CategoryDetail[];
@@ -23,11 +21,20 @@ const CategoryList = ({
     allPostCount,
     currentCategory = "All",
 }: CategoryListProps) => {
+    const router = useRouter();
+
+    const onCategoryChange = (value: string) => {
+        if (value === "All") {
+            router.push("/blog");
+        } else {
+            router.push(`/blog/${value}`);
+        }
+    };
     return (
         <>
-            <section className="flex flex-col items-center justify-center mb-8">
-                <div className="text-4xl font-bold mb-2">{`${currentCategory}`}</div>
-                <div className="text-2xl">{`
+            <section className="flex flex-col mb-12 items-center justify-center">
+                <div className="text-4xl font-normal mb-2 text-primary">{`${currentCategory}`}</div>
+                <div className="text-2xl font-thin">{`
                 ${
                     currentCategory === "All"
                         ? allPostCount
@@ -37,7 +44,7 @@ const CategoryList = ({
                 } posts`}</div>
             </section>
 
-            <section className="mb-10 hidden sm:block">
+            <section className="mb-6 px-4 hidden sm:block">
                 <ul className="flex gap-3">
                     <CategoryButton
                         href="/blog"
@@ -55,6 +62,24 @@ const CategoryList = ({
                         />
                     ))}
                 </ul>
+            </section>
+            <section className="mb-6 sm:hidden">
+                <Select
+                    onValueChange={onCategoryChange}
+                    defaultValue={currentCategory}
+                >
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="All">All</SelectItem>
+                        {categoryList.map((cg) => (
+                            <SelectItem key={cg.dirName} value={cg.dirName}>
+                                {cg.publicName}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </section>
         </>
     );

@@ -4,7 +4,6 @@ import { MDXComponent } from "../mdx";
 import { GitRepo } from "@/components/about/git-repo";
 import { ServiceLink } from "@/components/about/service-link";
 import { Project } from "@/config/types";
-// @ts-expect-error no types
 import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";

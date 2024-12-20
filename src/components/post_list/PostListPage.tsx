@@ -1,3 +1,4 @@
+import React from "react";
 import CategoryList from "./CategoryList";
 import PostCard from "./PostCard";
 import {
@@ -23,10 +24,16 @@ const PostListPage = async ({ category }: PostListProps) => {
                 currentCategory={category}
             />
             <section>
-                <ul className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-                    {postList.map((post) => (
-                        <PostCard key={post.uniqueKey} post={post} />
+                <ul className="grid grid-cols-1">
+                    {postList.map((post, index) => (
+                        <React.Fragment key={post.uniqueKey || index}>
+                            <PostCard post={post} />
+                            {index !== postList.length - 1 && (
+                                <hr className="my-3" />
+                            )}
+                        </React.Fragment>
                     ))}
+                    {postList.length > 3 && <div className="mb-8"></div>}
                 </ul>
             </section>
         </section>

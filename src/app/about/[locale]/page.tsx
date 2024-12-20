@@ -1,50 +1,51 @@
 import { Metadata } from "next";
-
+import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
+import { DATAS, Locale } from "@/config/types";
 import LanguageSelector from "@/components/about/language-selector";
 import ProjectList from "@/components/about/project-list";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
-import { ProjectBody } from "@/components/project-detail/project-body";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { GlobeIcon, MailIcon } from "lucide-react";
+import * as D from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
 } from "@/components/ui/card";
-import * as D from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Section } from "@/components/ui/section";
-import { DATAS, Locale } from "@/config/types";
-import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
-import { cn } from "@/lib/utils";
-import { GlobeIcon, MailIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ProjectBody } from "@/components/project-detail/project-body";
 
-interface Props {
-    params: {
-        locale: Locale;
-    };
-}
+type Props = Promise<{ locale: Locale }>;
 
 export function generateStaticParams() {
-    return Object.keys(DATAS).map((locale) => ({ locale }));
+    return (Object.keys(DATAS) as Locale[]).map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { locale } = await params;
+export async function generateMetadata({
+    params,
+}: {
+    params: Props;
+}): Promise<Metadata> {
+    const { locale } = await params; // await 불필요
     const data = DATAS[locale].data;
     return {
         title: `${data.name} | ${data.about}`,
         description: data.summary,
     };
 }
-
-export default async function AboutPage({ params }: Props) {
+export default async function AboutPage({ params }: { params: Props }) {
     const { locale } = await params;
     const RESUME_DATA = DATAS[locale].data;
+
+    // Async data fetching directly inside the component
     const projectList = await getSortedProjectList(locale);
     const careerProjectList = await getCareerProjectList(locale);
+
     return (
         <main className="container relative mx-auto scroll-my-12 overflow-auto p-6 sm:p-9 md:p-16 print:p-12 print:pt-0">
             <LanguageSelector className="m-auto mb-5 border-0 sm:hidden print:hidden" />
@@ -67,11 +68,11 @@ export default async function AboutPage({ params }: Props) {
                                 {RESUME_DATA.location}
                             </a>
                         </p>
-                        <div className="flex justify-center gap-x-2 pt-1 text-sm text-muted-foreground sm:justify-start print:hidden">
+                        <div className="flex justify-center gap-1.5 pt-1 m-0 text-sm text-muted-foreground sm:justify-start print:hidden">
                             {RESUME_DATA.contact.social.map((social) => (
                                 <Button
                                     key={social.name}
-                                    className="size-8"
+                                    className="size-8 shadow-none"
                                     variant="outline"
                                     size="icon"
                                     asChild
@@ -85,7 +86,7 @@ export default async function AboutPage({ params }: Props) {
                                 <D.Dialog>
                                     <D.DialogTrigger>
                                         <Button
-                                            className="size-8"
+                                            className="size-8 shadow-none p-2"
                                             variant="outline"
                                             size="icon"
                                             asChild
@@ -160,9 +161,12 @@ export default async function AboutPage({ params }: Props) {
                 <Section>
                     <h2 className="text-2xl font-bold">Work Experience</h2>
                     <div className="space-y-4">
-                        {/* {RESUME_DATA.work.map((work) => (
-                            <Card key={work.company}>
-                                <CardHeader className="mb-3">
+                        {RESUME_DATA.work.map((work) => (
+                            <Card
+                                key={work.company}
+                                className="rounded-lg border p-6 text-card-foreground shadow-none"
+                            >
+                                <CardHeader className="mb-3 p-0">
                                     <div className="flex flex-col items-start justify-between gap-1 gap-x-2 text-base sm:flex-row sm:items-center">
                                         <h3 className="inline-flex items-center justify-center gap-x-1 text-lg font-semibold leading-none">
                                             <a
@@ -250,15 +254,18 @@ export default async function AboutPage({ params }: Props) {
                                     </ul>
                                 )}
                             </Card>
-                        ))} */}
+                        ))}
                     </div>
                 </Section>
                 <Section>
                     <h2 className="text-2xl font-bold">Education</h2>
                     <div className="space-y-3">
                         {RESUME_DATA.education.map((education) => (
-                            <Card key={education.school}>
-                                <CardHeader>
+                            <Card
+                                key={education.school}
+                                className="shadow-none rounded-lg"
+                            >
+                                <CardHeader className="pb-0">
                                     <div className="flex flex-col items-start justify-between gap-1 gap-x-2 text-base sm:flex-row sm:items-center">
                                         <h3 className="text-lg font-semibold leading-none">
                                             {education.school}
@@ -268,7 +275,7 @@ export default async function AboutPage({ params }: Props) {
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="mt-2 text-base print:text-[12px]">
+                                <CardContent className="text-pretty text-muted-foreground mt-2 text-base print:text-[12px]">
                                     {education.degree}
                                 </CardContent>
                             </Card>

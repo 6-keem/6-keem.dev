@@ -1,12 +1,14 @@
+import {nextui} from '@nextui-org/theme';
 import type { Config } from "tailwindcss";
 
 const config = {
     darkMode: ["class"],
-    content: [
-        "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/components/spinner.js"
+  ],
     prefix: "",
     theme: {
         container: {
@@ -206,10 +208,7 @@ const config = {
             },
         },
     },
-    plugins: [
-        require("tailwindcss-animate"),
-        require("@tailwindcss/typography"),
-    ],
+  plugins: [require("tailwindcss-animate"),require("@tailwindcss/typography"),nextui()],
 } satisfies Config;
 
 export default config;

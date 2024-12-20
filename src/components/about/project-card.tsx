@@ -18,8 +18,8 @@ export function ProjectCard({ project }: Props) {
     const tagList = tags.split(",").map((item) => item.trim());
 
     return (
-        <Card className="flex h-full flex-col overflow-hidden p-4 text-left">
-            <CardHeader className="">
+        <Card className="flex h-full flex-col overflow-hidden p-4 text-left shadow-none rounded-lg">
+            <CardHeader className="p-0">
                 <div>
                     <CardTitle className="flex items-center gap-1.5 text-base">
                         {title}
@@ -35,7 +35,7 @@ export function ProjectCard({ project }: Props) {
                     </CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className="mt-auto flex">
+            <CardContent className="mt-auto flex p-0">
                 <div className="mt-2 flex flex-wrap gap-1">
                     {tagList.map((tag) => (
                         <Badge

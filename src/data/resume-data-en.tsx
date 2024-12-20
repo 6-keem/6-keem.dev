@@ -1,14 +1,14 @@
 import { Github } from "lucide-react";
-export const RESUME_DATA_EN = {
-    name: "",
-    initials: "",
+export const RESUME_DATA_EN: ResumeData = {
+    name: "SANGJUN KIM",
+    initials: "KSJ",
     location: "Seoul, South Korea, KST",
     locationLink: "https://www.google.com/maps/place/seoul",
-    about: "",
-    summary: "",
-    avatarUrl: "",
+    about: "Full Stack Developer",
+    summary: "Hello",
+    avatarUrl: "https://avatars.githubusercontent.com/u/113224939?v=4",
     contact: {
-        email: "ehgud456456@naver.com",
+        email: "6ukeem@gmail.com",
         social: [
             {
                 name: "GitHub",
@@ -19,9 +19,9 @@ export const RESUME_DATA_EN = {
     },
     education: [
         {
-            school: "",
-            degree: "",
-            start: "",
+            school: "Hansung Univ.",
+            degree: "Currently enrolled in Computer Science",
+            start: "2020",
             end: "",
         },
     ],
@@ -31,21 +31,12 @@ export const RESUME_DATA_EN = {
             link: "",
             title: "",
             start: "",
-            end: null,
+            end: undefined,
             description: "",
-            points: [""],
-        },
-        {
-            company: "",
-            link: "",
-            title: "",
-            start: "",
-            end: null,
-            description: "",
-            points: [""],
+            points: [],
         },
     ],
-    skills: ["Javascript", "Typescript", "React.js", "Vue.js", "Next.js"],
+    skills: ["Flutter", "React.js", "Next.js"],
 } as const;
 
 export type RESUME = typeof RESUME_DATA_EN;
