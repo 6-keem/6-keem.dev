@@ -4,13 +4,13 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface ScrollContextProps {
     progress: number;
     navTopMargin: number;
-    footerHeight: number;
+    footerTopMargin: number;
 }
 
 const ScrollContext = createContext<ScrollContextProps>({
     progress: 0,
     navTopMargin: 0,
-    footerHeight: 0, // Footer 기본적으로 숨김 상태
+    footerTopMargin: 0, // Footer 기본적으로 숨김 상태
 });
 
 export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -18,7 +18,7 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
     const [lastScrollY, setLastScrollY] = useState(0);
     const [navTopMargin, setNavTopMargin] = useState(0);
-    const [footerHeight, setFooterHeight] = useState(0);
+    const [footerTopMargin, setFooterTopMargin] = useState(0);
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -27,6 +27,11 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
             const totalHeight =
                 document.documentElement.scrollHeight -
                 document.documentElement.clientHeight;
+
+            if (currentScrollY > 0) {
+                window.scrollY = 0;
+                return;
+            }
 
             // Progress 계산
             const newProgress =
@@ -50,24 +55,19 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
                 );
             }
 
-            const isAtBottom = totalHeight - currentScrollY <= 0;
-            const maxFooterHeight = 80;
-            const deltaScroll = currentScrollY - lastScrollY;
-
-            // Footer가 최하단에 있을 때만 높이 확장
-            if (isAtBottom) {
-                setFooterHeight((prev) =>
-                    Math.min(prev + Math.abs(deltaScroll), maxFooterHeight)
-                );
-            } else if (currentScrollY < lastScrollY) {
-                // 스크롤 올릴 때 Footer가 축소
-                setFooterHeight((prev) =>
-                    Math.max(prev - Math.abs(deltaScroll), 0)
-                );
+            const isBottom = totalHeight - (currentScrollY + 80) <= 0;
+            if (isBottom) {
+                if (currentScrollY < lastScrollY) {
+                    setFooterTopMargin(
+                        Math.max(totalHeight - (currentScrollY + 80), -80)
+                    );
+                } else {
+                    // 스크롤이 내려감 -> 화면이 내려감
+                    setFooterTopMargin(
+                        Math.min(totalHeight - (currentScrollY + 80), 0)
+                    );
+                }
             }
-
-            setLastScrollY(currentScrollY);
-
             setLastScrollY(currentScrollY);
         };
 
@@ -79,7 +79,7 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
 
     return (
         <ScrollContext.Provider
-            value={{ progress, navTopMargin, footerHeight }}
+            value={{ progress, navTopMargin, footerTopMargin }}
         >
             {children}
         </ScrollContext.Provider>

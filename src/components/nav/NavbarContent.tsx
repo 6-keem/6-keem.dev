@@ -11,8 +11,8 @@ export const NavbarContent = () => {
 
     const navItems = [
         { path: "/blog", label: "6-keem" },
-        { path: "/about", label: "About" },
         { path: "/gallery", label: "Gallery" },
+        { path: "/about", label: "About" },
     ];
 
     const localePathList = ["/about"];
