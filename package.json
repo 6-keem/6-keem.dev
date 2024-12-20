@@ -10,7 +10,6 @@
     },
     "dependencies": {
         "@fec/remark-a11y-emoji": "^4.0.2",
-        "@next/swc-darwin-arm64": "^15.1.2",
         "@nextui-org/spinner": "^2.2.4",
         "@nextui-org/system": "^2.4.4",
         "@nextui-org/theme": "^2.4.3",
