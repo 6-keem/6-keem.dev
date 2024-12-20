@@ -29,7 +29,8 @@ const parsePost = async (postPath: string): Promise<Post> => {
 // MDX의 개요 파싱
 // url, cg path, cg name, slug
 export const parsePostAbstract = (postPath: string) => {
-    const normalizedPath = postPath.split(path.sep).join("/");
+    const decodedPostPath = decodeURIComponent(postPath);
+    const normalizedPath = decodedPostPath.split(path.sep).join("/");
     const filePath = normalizedPath
         .slice(normalizedPath.indexOf(BASE_PATH))
         .replace(`${BASE_PATH}/`, "")
@@ -43,11 +44,12 @@ export const parsePostAbstract = (postPath: string) => {
 
 // MDX detail
 const parsePostDetail = async (postPath: string) => {
-    const file = fs.readFileSync(postPath, "utf8");
+    const decodedPostPath = decodeURIComponent(postPath);
+    const file = fs.readFileSync(decodedPostPath, "utf8");
     const { data, content } = matter(file);
     const grayMatter = data as PostMatter;
     const readingMinutes = Math.ceil(readingTime(content).minutes);
-    const uniqueKey = `${postPath}-${grayMatter.date}`;
+    const uniqueKey = `${decodedPostPath}-${grayMatter.date}`;
     const dateString = dayjs(grayMatter.date)
         .locale("ko")
         .format("YYYY년 MM월 DD일");
