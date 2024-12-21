@@ -8,6 +8,7 @@ export interface PostMatter {
     dateString: string;
     thumbnail: string;
     desc: string;
+    tags: string[];
 }
 
 export interface Post extends PostMatter {
