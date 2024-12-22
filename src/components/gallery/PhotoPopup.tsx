@@ -73,7 +73,7 @@ export const PhotoPopup = ({
                             <img
                                 src={photo.thumbnail}
                                 alt={photo.title}
-                                className={`w-auto h-auto max-w-full max-h-[50vh] object-contain rounded-md transition-all duration-300 ${
+                                className={`w-auto h-auto max-w-full max-h-[60vh] object-contain rounded-md transition-all duration-300 ${
                                     isOpening
                                         ? "scale-95 opacity-0"
                                         : "scale-100 opacity-100"
