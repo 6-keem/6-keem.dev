@@ -48,7 +48,7 @@ export default function RootLayout({
                     <ScrollProvider>
                         <Header />
                         <Suspense fallback={<Loading />}>
-                            <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative overflow-hidden">
+                            <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative">
                                 {children}
                                 <GlowBackground />
                             </main>

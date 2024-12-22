@@ -27,12 +27,6 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
             const totalHeight =
                 document.documentElement.scrollHeight -
                 document.documentElement.clientHeight;
-
-            if (currentScrollY > 0) {
-                window.scrollY = 0;
-                return;
-            }
-
             // Progress 계산
             const newProgress =
                 totalHeight === 0
