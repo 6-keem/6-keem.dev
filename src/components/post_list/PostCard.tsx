@@ -54,16 +54,16 @@ const PostCard = ({ post }: Props) => {
                                 {post.title}
                             </h2>
                             {/* TODO 추후에 정확한 계산 필요 */}
-                            <h2
-                                className={`text-text-secondary text-sm font-thin sm:text-sm md:text-md line-clamp-${Math.round(
-                                    Math.abs(
-                                        MAX_LINES -
-                                            (post.title.length / 145) * 2
-                                    )
-                                )}`}
-                            >
-                                {extractPlainText(post.content)}
-                            </h2>
+                            <div
+    className={`text-text-secondary text-sm font-thin sm:text-sm md:text-md ${
+        post.title.length > 100
+            ? "line-clamp-3"
+            : "line-clamp-5"
+    }`}
+>
+    {extractPlainText(post.content)}
+</div>
+
                         </div>
                         <div className="flex justify-between gap-3 text-sm text-gray-500 dark:text-gray-400">
                             <div className="flex items-center gap-1">
