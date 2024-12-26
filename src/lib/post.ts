@@ -82,6 +82,19 @@ export const getSortedPostList = async (category?: string) => {
     return sortPostList(postList);
 };
 
+export const getPostByDate = async (date?: string | null) => {
+    const postList = await getSortedPostList();
+    let post: Post | null = null;
+    try {
+        post = postList.find((post) => {
+            console.log(post);
+            if (post.slug === date) return post;
+        })!;
+    } finally {
+        return post ? post : postList[0];
+    }
+};
+
 export const getSitemapPostList = async () => {
     const postList = await getPostList();
     const baseUrl = "https://6-keem.dev";
