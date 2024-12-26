@@ -34,7 +34,7 @@ export default async function BlogBadge({
     height: string;
     date?: string | null;
 }) {
-    let post = await getPostByDate(date);
+    const post = await getPostByDate(date);
     let currentX = 22;
 
     // 태그에 대한 SVG 요소 생성
