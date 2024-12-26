@@ -1,4 +1,4 @@
-import { getPostList, getSortedPostList } from "@/lib/post";
+import { getPostByDate, getPostList, getSortedPostList } from "@/lib/post";
 
 const svgStyles = `
   @keyframes heartBeat {
@@ -28,11 +28,13 @@ const svgStyles = `
 export default async function BlogBadge({
     width,
     height,
+    date,
 }: {
     width: string;
     height: string;
+    date?: string | null;
 }) {
-    const post = (await getSortedPostList())[0];
+    let post = await getPostByDate(date);
     let currentX = 22;
 
     // 태그에 대한 SVG 요소 생성
@@ -123,7 +125,11 @@ export default async function BlogBadge({
         font-size="14"
         font-weight="bold"
       >
-        ${post.title}
+        ${
+            post.title.length >= 50
+                ? post.title.slice(0, 50) + "..."
+                : post.title
+        }
       </text>
       <text
         x="25"
@@ -133,7 +139,7 @@ export default async function BlogBadge({
         font-weight="lighter"
       >
         <tspan>
-        ${post.desc}
+        ${post.desc.length >= 60 ? post.desc.slice(0, 60) + "..." : post.desc}
         </tspan>
       </text>
 

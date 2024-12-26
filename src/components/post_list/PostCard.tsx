@@ -7,6 +7,7 @@ import { CalendarDays, Clock3 } from "lucide-react";
 interface Props {
     post: Post;
 }
+const MAX_LINES = 5;
 
 const PostCard = ({ post }: Props) => {
     const extractPlainText = (mdxContent: string) => {
@@ -52,7 +53,15 @@ const PostCard = ({ post }: Props) => {
                             <h2 className="mb-3 text-lg font-semibold sm:text-lg md:text-xl">
                                 {post.title}
                             </h2>
-                            <h2 className="text-text-secondary text-sm font-thin sm:text-sm md:text-md line-clamp-5">
+                            {/* TODO 추후에 정확한 계산 필요 */}
+                            <h2
+                                className={`text-text-secondary text-sm font-thin sm:text-sm md:text-md line-clamp-${Math.round(
+                                    Math.abs(
+                                        MAX_LINES -
+                                            (post.title.length / 145) * 2
+                                    )
+                                )}`}
+                            >
                                 {extractPlainText(post.content)}
                             </h2>
                         </div>
