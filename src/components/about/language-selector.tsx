@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as S from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { GlobeIcon } from "lucide-react";
+import { Locale } from "@/config/types";
 
 export default function LanguageSelector({
     className,
@@ -15,6 +16,10 @@ export default function LanguageSelector({
     const pathname = usePathname();
     const router = useRouter();
 
+    const localePattern = /\/(ko|en|jp)$/;
+    const currentLocale = pathname.match(localePattern)?.[1] || "ko";
+    const [selectedLocale, setSelectedLocale] = useState(currentLocale)
+
     const isKo = pathname.endsWith("/ko");
     const isEn = pathname.endsWith("/en");
     const isJp = pathname.endsWith("/jp");
@@ -24,13 +29,12 @@ export default function LanguageSelector({
         setMounted(true);
     }, []);
 
-    // Ensure that the component does not render until mounted is true
     if (!mounted) {
         return null;
     }
 
     const onSelectChange = (value: string) => {
-        const localePattern = /\/(ko|en|jp)$/;
+        setSelectedLocale(value); // 선택된 언어 업데이트
         const newPath = pathname.replace(localePattern, `/${value}`);
         router.push(newPath);
     };
@@ -38,7 +42,7 @@ export default function LanguageSelector({
     return (
         <S.Select
             onValueChange={onSelectChange}
-            defaultValue={isEn ? "en" : "ko"}
+            defaultValue={selectedLocale}
         >
             <S.SelectTrigger className={cn("w-fit gap-2", className)}>
                 <GlobeIcon className="size-3.5" />
