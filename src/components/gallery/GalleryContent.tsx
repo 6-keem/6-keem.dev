@@ -44,13 +44,13 @@ const GalleryContent = ({ photoList }: { photoList: Photo[] }) => {
         <section className="min-h-screen">
             <Masonry
                 breakpointCols={breakpointColumnsObj}
-                className="flex w-auto gap-2 md:gap-4"
+                className="flex w-auto gap-4 md:gap-4"
                 columnClassName="bg-clip-padding"
             >
                 {photoList.map((photo, index) => (
                     <div
                         key={photo.uniqueKey || index}
-                        className={`mb-2 md:mb-4 transition-opacity duration-500 ${
+                        className={`mb-4 md:mb-4 transition-opacity duration-500 ${
                             visibleItems.includes(index)
                                 ? "opacity-100"
                                 : "opacity-0"
