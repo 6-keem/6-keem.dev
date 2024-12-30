@@ -57,7 +57,7 @@ export const PhotoPopup = ({
                         />
                         <button
                             className="w-3 h-3 flex items-center justify-center text-sm font-semibold text-white bg-yellow-500 rounded-full hover:bg-yellow-600"
-                            onClick={() => alert("Yellow button clicked")}
+                            onClick={() => {}}
                         />
                         <button
                             className="w-3 h-3 flex items-center justify-center text-sm font-semibold text-white bg-green-500 rounded-full hover:bg-green-600"
