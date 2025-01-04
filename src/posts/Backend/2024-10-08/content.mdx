@@ -1,0 +1,54 @@
+---
+title: AWS EC2 docker, docker-compose 설치
+date: 2024-10-08
+desc: AWS EC2 환경 구성 (1)
+thumbnail: /posts/Backend/2024-10-08/thumbnail.png
+tags:
+    - AWS
+    - SpringBoot
+    - Docker
+---
+
+<img
+    src="/posts/Backend/2024-10-08/thumbnail.png"
+    style={{ 
+        width: "100%" ,
+        borderRadius :"8px"
+    }}
+    alt="thumbnail.png"
+/>
+<Callout type ="info">해당 글은 기록용으로 부족한 부분이 있을 수 있습니다. 참고 부탁드립니다.</Callout>
+
+## 1. 들어가며
+ 교내 팀 프로젝트를 통해 백엔드 개발 다수 존재하지만, 환경 구축이나 배포 경험은 부족하다. 
+ 이번 학기에는 "다우기술"의 사내 문제를 해결하는 해커톤 형태의 과목을 수강하게 되었고, 
+ 팀원들과 역할을 분담하여 초기 백엔드 환경 구축 및 배포를 맡게 되었다.
+
+
+## 2. AWS란?
+AWS(Amazon Web Services)는 클라우드 컴퓨팅을 통해 다양한 서비스를 제공하는 플랫폼으로, 
+전 세계적으로 사용되는 안전하고 확장 가능한 인프라를 제공한다. 이를 통해 사용자는 서버 자원을 
+유연하게 조정하고 관리할 수 있으며, 초기 비용 없이 필요한 만큼만 비용을 지불할 수 있다.
+
+<b>본 글에서는 EC2를 사용하여 진행할 것이다.</b>
+
+## 3. EC2 인스턴스 생성 및 설정
+
+보안 규칙은 다음과 같이 설정해둔다
+
+![보안 규칙](/posts/Backend/2024-10-08/1.png)
+
+### EC2 Instance Console에 접속
+인스턴스 생성 시 발급 받은 pem 키가 있을 것이다. 
+
+```bash
+chmod 400 이름.pem
+```
+
+해당 명령어로 권한을 변경하여 준다.
+
+```bash
+ssh -i /경로/이름.pem ec2-user@인스턴스-퍼블릭-ip
+```
+![접속 성공 🤩](/posts/Backend/2024-10-08/2.png)
+
