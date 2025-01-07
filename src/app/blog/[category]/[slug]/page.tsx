@@ -19,7 +19,7 @@ const PostDetail = async ({ params }: { params: Props }) => {
 		<div className="prose mx-auto w-full max-w-[750px] px-5 dark:prose-invert sm:px-6">
 			<PostHeader post={post} />
 			<article className="relative">
-				<SidebarContent />
+				{/* <SidebarContent /> */}
 				<PostBody post={post} />
 				<TocContent toc={toc} />
 			</article>
