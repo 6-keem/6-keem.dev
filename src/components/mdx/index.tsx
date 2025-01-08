@@ -3,11 +3,13 @@ import { Image } from "./Image";
 import { ExternalLink } from "./Link";
 import { MDXComponents } from "mdx/types";
 import { Thumbnail } from "./Thumbnail";
+import { Highlight } from "./Highlight";
 
 export const MDXComponent: MDXComponents = {
     a: ExternalLink as any,
     img: Image as any,
     blockquote: Callout,
     Callout,
-    Thumbnail: Thumbnail
+    Thumbnail: Thumbnail,
+    Highlight: Highlight
 };
