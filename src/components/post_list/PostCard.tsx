@@ -25,6 +25,7 @@ const PostCard = ({ post }: Props) => {
 			.replace(/---/g, '') // Remove Markdown horizontal rule (---)
 			.replace(/(\r\n|\n|\r)/g, ' ') // Replace newlines with a space
 			.replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+			.replace(/\**/g, '') // Replave bold syntax (**example**)
 			.trim(); // Trim leading/trailing spaces
 
 		return cleanContent;
