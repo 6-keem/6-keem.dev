@@ -6,6 +6,7 @@ import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { MDXComponent } from "../mdx";
+import plasticTheme from "@/../plastic-theme.json";
 
 interface Props {
     post: Post;
@@ -32,7 +33,7 @@ export const PostBody = ({ post }: Props) => {
                             rehypePrettyCode,
                             {
                                 theme: {
-                                    dark: "github-dark-dimmed",
+                                    dark: plasticTheme,
                                     light: "github-light",
                                 },
                             },
