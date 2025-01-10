@@ -204,6 +204,36 @@
     animation: fadeInRow 0.5s ease-out forwards;
 }
 
+[data-rehype-pretty-code-title] {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+}
+
+html.light [data-rehype-pretty-code-title] {
+    color: #000;
+    background-color: #f3f4f6;
+}
+
+html.dark [data-rehype-pretty-code-title] {
+    color: #fff;
+    background-color: #363c46;
+}
+
+figure[data-rehype-pretty-code-figure]:has(figcaption) pre {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top-width: 0;
+}
+
+code[data-line-numbers] > [data-line]::before {
+    @apply mr-3 inline-block w-3 text-left text-gray-600 p-0
+      content-[counter(lineNumber)]
+      [counter-increment:lineNumber];
+}
+
 @layer utilities {
     .text-balance {
         text-wrap: balance;

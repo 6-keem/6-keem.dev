@@ -32,7 +32,7 @@ export const PostBody = ({ post }: Props) => {
                             rehypePrettyCode,
                             {
                                 theme: {
-                                    dark: "github-dark-dimmed",
+                                    dark: require("@/../plastic-theme.json"),
                                     light: "github-light",
                                 },
                             },
