@@ -16,19 +16,17 @@ export const NavbarContent = () => {
     ];
 
     const localePathList = ["/about"];
-    const isLocalePath = localePathList.some((path) =>
-        pathname.startsWith(path)
-    );
+    const isLocalePath = localePathList.some((path) => pathname.startsWith(path));
 
     return (
         <div className="flex h-[64px] w-full max-w-[1200px] items-center justify-between px-4">
             <div className="flex space-x-2">
                 {navItems.map((item) => (
                     <Link
-                        href={currentPath !== item.path ? item.path : "#"}
+                        href={item.path}
                         key={item.path}
                         onClick={(e) => {
-                            if (currentPath === item.path) {
+                            if (currentPath === item.path && item.path !== "/blog") {
                                 e.preventDefault();
                             }
                         }}
@@ -54,19 +52,12 @@ export const NavbarContent = () => {
                 ))}
             </div>
             <div className="flex items-center">
-                {isLocalePath && (
-                    <LanguageSelector className="hidden sm:flex" />
-                )}
+                {isLocalePath && <LanguageSelector className="hidden sm:flex" />}
                 <ThemeToggle />
                 <Link href={"https://github.com/6-keem/"}>
-                    <Button
-                        variant={"ghost"}
-                        className="p-0 ms-2 flex items-center"
-                    >
+                    <Button variant={"ghost"} className="p-0 ms-2 flex items-center">
                         <div className="p-2 md:p-3 flex items-center justify-center">
-                            <GithubIcon
-                                style={{ width: "20px", height: "20px" }}
-                            />
+                            <GithubIcon style={{ width: "20px", height: "20px" }} />
                         </div>
                     </Button>
                 </Link>
