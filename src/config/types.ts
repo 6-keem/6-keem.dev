@@ -6,6 +6,7 @@ export interface PostMatter {
     title: string;
     date: Date;
     dateString: string;
+    seriesName: string;
     thumbnail: string;
     desc: string;
     tags: string[];

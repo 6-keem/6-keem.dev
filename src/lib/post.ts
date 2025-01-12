@@ -87,7 +87,6 @@ export const getPostByDate = async (date?: string | null) => {
     let post: Post | null = null;
     try {
         post = postList.find((post) => {
-            console.log(post);
             if (post.slug === date) return post;
         })!;
     } finally {
