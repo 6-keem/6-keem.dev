@@ -1,5 +1,4 @@
 import { PostBody } from "@/components/post_detail/PostBody";
-import { PostFooter } from "@/components/post_detail/PostFooter";
 import { PostHeader } from "@/components/post_detail/PostHeader";
 import TocContent from "@/components/sidebar/toc/TocContentSidebar";
 import { getPostDetail, getSortedPostList, parseToc } from "@/lib/post";
