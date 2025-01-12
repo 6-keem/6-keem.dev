@@ -7,43 +7,57 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { MDXComponent } from "../mdx";
 import plasticTheme from "@/../plastic-theme.json";
+import Series from "../mdx/Series";
 
 interface Props {
     post: Post;
+    posts: Post[];
 }
 
-export const PostBody = ({ post }: Props) => {
+export const PostBody = ({ post, posts }: Props) => {
+    let seriesPost: Post[] = [];
+    try {
+        seriesPost = posts.filter((p) => p.seriesName === post.seriesName);
+    } catch {}
+
     return (
-        <MDXRemote
-            source={post.content}
-            options={{
-                mdxOptions: {
-                    remarkPlugins: [
-                        // 깃허브 Flavored 마크다운 지원 추가 (version downgrade)
-                        remarkGfm,
-                        // 이모티콘 접근성 향상
-                        remarkA11yEmoji,
-                        // mdx 1줄 개행 지원
-                        remarkBreaks,
-                    ],
-                    rehypePlugins: [
-                        // pretty code block
-                        [
-                            // @ts-ignore
-                            rehypePrettyCode,
-                            {
-                                theme: {
-                                    dark: plasticTheme,
-                                    light: "github-light",
-                                },
-                            },
+        <>
+            {post.seriesName !== undefined ? (
+                <Series seriesName={post.seriesName} slug={post.slug} posts={seriesPost} />
+            ) : (
+                <></>
+            )}
+            <MDXRemote
+                source={post.content}
+                options={{
+                    mdxOptions: {
+                        remarkPlugins: [
+                            // 깃허브 Flavored 마크다운 지원 추가 (version downgrade)
+                            remarkGfm,
+                            // 이모티콘 접근성 향상
+                            remarkA11yEmoji,
+                            // mdx 1줄 개행 지원
+                            remarkBreaks,
                         ],
-                        // toc id를 추가하고 제목을 연결
-                        rehypeSlug,
-                    ],
-                },
-            }}
-            components={MDXComponent}
-        />
+                        rehypePlugins: [
+                            // pretty code block
+                            [
+                                // @ts-ignore
+                                rehypePrettyCode,
+                                {
+                                    theme: {
+                                        dark: plasticTheme,
+                                        light: "github-light",
+                                    },
+                                },
+                            ],
+                            // toc id를 추가하고 제목을 연결
+                            rehypeSlug,
+                        ],
+                    },
+                }}
+                components={MDXComponent}
+            />
+        </>
     );
 };
