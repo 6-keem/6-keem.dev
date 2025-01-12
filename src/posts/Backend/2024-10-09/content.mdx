@@ -7,6 +7,7 @@ tags:
     - EC2
     - Docker
     - Deployment
+seriesName: 환경구성
 ---
 
 <Thumbnail src ="/posts/Backend/2024-10-09/thumbnail.png"/>
@@ -19,7 +20,7 @@ tags:
 
 ## 2. Docker 설치 방법
 #### 1.  yum update
-```bash
+```bash title="next.config.mjs"
 sudo yum update -y
 ```
 
@@ -63,8 +64,8 @@ docker-compose --version
 ```
 
 <Callout type="danger">Error loading Python lib '/tmp/_MEILqk4h0/libpython3.7m.so.1.0' 에러 발생 시</Callout>
-~~~bash
+```bash
 sudo yum install libxcrypt-compat
-~~~
+```
 
 ![설치 성공 ✨](/posts/Backend/2024-10-09/1.png)
