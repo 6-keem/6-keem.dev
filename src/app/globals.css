@@ -228,6 +228,11 @@ figure[data-rehype-pretty-code-figure]:has(figcaption) pre {
     border-top-width: 0;
 }
 
+figure[data-rehype-pretty-code-figure] > pre + figcaption {
+    @apply mb-8 mt-2 block w-full text-center text-sm text-gray-500 dark:text-gray-400 bg-transparent
+}
+  
+
 code[data-line-numbers] > [data-line]::before {
     @apply mr-3 inline-block w-3 text-left text-gray-600 p-0
       content-[counter(lineNumber)]
