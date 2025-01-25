@@ -1,0 +1,25 @@
+<svg width="45" height="30" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <polygon
+    points="22.5,30 0,0 45,0"
+    fill="#000"
+    stroke="#000"
+    stroke-width="1"
+  />
+  <polygon
+    points="22.5,28 1,1 44,1"
+    fill="none"
+    stroke="#ffd900"
+    stroke-width="1"
+  />
+  <text
+    x="50%"
+    y="35%"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-size="10"
+    fill="#ffd900"
+    font-weight="bold"
+  >
+    注意
+  </text>
+</svg>
