@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { baseDomain, blogName, blogThumbnailURL } from "@/config/const";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { SessionProvider } from "next-auth/react";
 
 export async function generateMetadata(): Promise<Metadata> {
     const title = blogName;
@@ -46,14 +47,16 @@ export default function RootLayout({
             >
                 <MyThemeProvider>
                     <ScrollProvider>
-                        <Header />
-                        <Suspense fallback={<Loading />}>
-                            <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative">
-                                {children}
-                                <GlowBackground />
-                            </main>
-                        </Suspense>
-                        <Footer />
+                        <SessionProvider>
+                            <Header />
+                            <Suspense fallback={<Loading />}>
+                                <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative">
+                                    {children}
+                                    <GlowBackground />
+                                </main>
+                            </Suspense>
+                            <Footer />
+                        </SessionProvider>
                     </ScrollProvider>
                 </MyThemeProvider>
             </body>
