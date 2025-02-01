@@ -41,11 +41,20 @@ export default async function BlogBadge({
     const mappedRects = post.tags
         .map((item, index) => {
             const approxCharWidth = 8;
-            const horizontalPadding = 4;
+            let horizontalPadding = 4;
+
+            const hasKorean = /[가-힣]/.test(item);
+            const hasJapanese = /[\u3040-\u30FF\u4E00-\u9FFF]/.test(item);
+    
+            if (hasKorean || hasJapanese) {
+                horizontalPadding = 10; 
+            }
+            
             const rectHeight = 22;
             const gapBetweenRects = 4;
             const textWidth = item.length * approxCharWidth;
             const rectWidth = textWidth * 0.8 + 4 * horizontalPadding;
+
 
             const rectY = 90;
             const textCenterX = currentX + rectWidth / 2;
