@@ -1,0 +1,163 @@
+---
+title: 'SpringBoot Code Convention'
+date: 2025-02-05
+desc: 협업을 위한 스프링부트 코드 컨벤션
+thumbnail: /posts/캡스톤디자인/2025-02-04/thumbnail.png
+tags:
+  - 'SpringBoot'
+  - 'Code Convention'
+seriesName: Code Convention
+---
+
+<Thumbnail src="/posts/캡스톤디자인/2025-02-04/thumbnail.png" />
+
+<Callout type="warn">SpringBoot Code Convention for 2025. Capstone Design</Callout>
+
+<Callout type="info">
+  [<strong>NAVER</strong>](https://github.com/naver/hackday-conventions-java/tree/master)의 java 코딩 컨벤션을 따라 작성되었습니다.
+</Callout>
+
+# Spring Boot 코드 컨벤션
+
+---
+
+## 1. 프로젝트 구조
+
+### 패키지 구조
+
+도메인 별로 패키지를 분리하여 관리합니다.
+예시:
+
+```bash
+com.example.myapp
+├── config        // 설정 관련 클래스
+├── api           // API 관련 클래스
+│   └── feature1
+│       └──  Controller.java
+│       └──  Service.java
+│       └──  Repository.java
+│   └── feature2
+│       └──  Controller.java
+│       └──  Service.java
+│       └──  Repository.java
+├── domain        // 엔티티 및 도메인 객체
+├── dto           // 데이터 전송 객체
+├── exception     // 예외 처리 관련 클래스
+└── util          // 유틸리티 클래스
+```
+
+---
+
+## 2. 네이밍 컨벤션
+
+### 1. 클래스/인터페이스
+
+PascalCase (첫 글자 대문자)
+예: `UserService`, `OrderController`, `ProductRepository`
+
+### 2. 메소드
+
+camelCase (첫 글자 소문자)
+예: `createUser()`, `findAllProducts()`
+
+### 3. 변수
+
+camelCase
+예: `userName`, `orderList`
+
+### 4. 상수
+
+모두 대문자, 언더스코어로 단어 구분
+예: `MAX_CONNECTIONS`, `DEFAULT_PAGE_SIZE`
+
+---
+
+## 3. 코드 포맷팅
+
+### 1. 들여쓰기
+
+Tab 또는 스페이스 4칸 사용
+
+### 2. 줄바꿈 및 공백
+
+각 클래스, 메소드, 필드 사이에 적절한 공백을 두어 가독성을 높입니다.
+긴 줄은 100~120자 이내로 작성합니다.
+
+예시:
+
+```java
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    // 생성자 주입
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public UserDto createUser(UserDto userDto) {
+        // 사용자 생성 로직
+        User user = new User(userDto.getName(), userDto.getEmail());
+        userRepository.save(user);
+        return new UserDto(user);
+    }
+}
+```
+
+## 4. 주석 작성
+
+<Highlight color="SKY">**모든 주석은 한글 로 작성하여 팀원이 이해하기 쉽도록 합니다.**</Highlight>
+
+### 1. 클래스/메소드 설명
+
+Javadoc 스타일 주석을 사용하여 클래스, 메소드의 역할과 사용법을 설명합니다.
+
+### 2. 인라인 주석
+
+코드의 복잡한 로직이나 주의사항이 있을 때 한 줄 주석(//)을 사용합니다.
+
+### 3. TODO 주석
+
+앞으로 개선하거나 추가할 사항이 있을 때 // TODO: 형식으로 남깁니다.
+
+예시:
+
+```java
+/**
+ * 사용자 관련 비즈니스 로직을 처리하는 서비스 클래스.
+ */
+@Service
+public class UserService {
+    // ...
+
+    /**
+     * @param userDto 사용자 데이터 전달 객체
+     * @return 생성된 사용자 정보를 담은 DTO
+     */
+    public UserDto createUser(UserDto userDto) {
+        // TODO: 입력 값 검증 추가
+        // 사용자 생성 로직
+    }
+}
+```
+
+## 5. 예외 처리
+
+### 1. 전역 예외 처리
+
+[@ControllerAdvice](https://velog.io/@donghokim1998/ControllerAdvice%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8A%94-%EC%82%AC%EB%A1%80%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%B4-%EC%9E%88%EB%8A%94%EA%B0%80-%EB%AF%B8%EC%85%98%EC%9D%84-%EC%A7%84%ED%96%89%ED%95%98%EB%8A%94-%EA%B3%BC%EC%A0%95%EC%97%90%EC%84%9C-%EC%96%B4%EB%94%94%EC%97%90-%EC%82%AC%EC%9A%A9%ED%96%88%EB%8A%94%EA%B0%80)를 활용하여 전역 예외 처리 로직을 작성합니다.
+
+### 2. 커스텀 예외
+
+비즈니스 로직에 맞는 커스텀 예외를 정의하여 사용합니다.
+
+```java
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+
+  public ResourceNotFoundException(String message) {
+    super(message);
+  }
+}
+```
