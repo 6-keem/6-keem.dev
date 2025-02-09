@@ -233,8 +233,13 @@ figure[data-rehype-pretty-code-figure]:has([data-rehype-pretty-code-title]) pre 
   border-top-width: 0;
 }
 
-figure[data-rehype-pretty-code-figure] > pre + figcaption {
-  @apply mb-8 mt-2 block w-full text-center text-sm text-gray-500 dark:text-gray-400 bg-transparent;
+figcaption[data-rehype-pretty-code-caption] {
+  text-align: center !important;
+  margin-top: 0.5rem !important;
+  font-size: 0.94rem !important;
+  color: #6b7280 !important;
+  display: block !important;
+  background-color: transparent;
 }
 
 code[data-line-numbers] > [data-line]::before {
