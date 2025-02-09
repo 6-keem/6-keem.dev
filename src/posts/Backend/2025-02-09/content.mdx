@@ -1,0 +1,130 @@
+---
+title: Jenkins로 CI/CD 구축하기 (1)
+date: 2025-02-09
+desc: CI/CD 구축 (1)
+thumbnail: /posts/Backend/2025-02-09/thumbnail.png
+tags:
+  - Jenkins
+  - CI/CD
+seriesName: CI/CD
+---
+
+<Thumbnail src="/posts/Backend/2025-02-09/thumbnail.png" />
+<Callout type="warn">해당 글은 기록용으로 부족한 부분이 있을 수 있습니다. 참고 부탁드립니다.</Callout>
+
+## 들어가며
+
+캡스톤 디자인 기획, 설걔 단계에서 아키텍쳐 설계 부분을 담당하게 됐다.
+
+지난 2학기에 진행했던 프리캡스톤의 기억을 더듬어보니 EC2 서버에 볼륨이 부족하여 자주 Docker 빌드가 실패하던 악몽이 떠올랐다.
+
+그래서 이번 캡스톤 디자인에서는 Docker 이미지를 운영 서버에서 Build하지 않도록 설계하고자 하였다.
+
+![아키텍쳐](/posts/Backend/2025-02-09/1.png)
+
+- 내가 설계한 기본적인 프로세스는 다음과 같다
+
+`메인 브랜치로 머지` → `Webhook 전달` → `Docker 이미지 빌드` → `Docker Hub에 푸시` → `결과 알림`
+
+## 1. EC2 인스턴스 정보
+
+- **os**: Amazon Linux 2023 AMI
+- **instance**: t2.micro
+- **volumn**: 30GB
+
+<Callout type="normal">t2.micro는 램 용량이 작아 스왑 메모리 설정을 따로 진행하였다.</Callout>
+
+## 2. Jenkins 설치
+
+#### Jenkins 저장소 등록
+
+```bash
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+```
+
+- wget 명령어를 사용하여 Jenkins의 yum 저장소 파일을 다운로드합니다. 이를 통해 yum이나 dnf 패키지 관리자가 Jenkins 패키지를 찾을 수 있게 됩니다.
+
+#### Jenkins GPG 키 가져오기
+
+```bash
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+```
+
+- Jenkins 저장소에서 제공하는 GPG 키를 가져와 시스템에 등록합니다. 이 키는 패키지의 무결성과 신뢰성을 확인하기 위해 사용됩니다.
+
+#### Amazon Corretto JDK 17 설치
+
+```bash
+sudo dnf install java-17-amazon-corretto -y
+```
+
+#### Jenkins 설치
+
+```bash
+sudo yum install jenkins -y
+```
+
+#### Jenkins 서비스 부팅 시 자동 시작 설정
+
+```bash
+sudo systemctl enable jenkins
+```
+
+#### Jenkins 서비스 시작
+
+```bash
+sudo systemctl start jenkins
+```
+
+#### Jenkins 서비스 상태 확인
+
+```bash
+sudo systemctl status jenkins
+```
+
+## 3. Git 설치
+
+#### 설치 및 버전 확인
+
+```bash
+sudo dnf install git -y
+git --version
+```
+
+## 4. Docker 설치
+
+#### 도커 설치
+
+```bash
+sudo dnf install docker -y
+```
+
+#### 도커 실행 및 활성화
+
+```bash
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+#### jenkins 사용자를 도커 그룹에 추가
+
+```bash
+sudo usermod -aG docker jenkins
+```
+
+#### jenkins 재시작
+
+```bash
+sudo systemctl restart jenkins
+```
+
+## 5. jenkins 접속 확인
+
+<Callout type="warn">**8080** 포트에 대한 인바운드 보안규칙 설정이 되어 있어야 합니다.</Callout>
+
+브라우저에서 ec2 public ip에 8080 포트로 jenkins 서버에 접속한다.
+
+> **예시) [http://0.0.0.0:8080](#)**
+
+![접속 성공 🦄](/posts/Backend/2025-02-09/2.png)
