@@ -1,0 +1,80 @@
+---
+title: 'Flutter Architecture Guide'
+date: 2025-02-12
+desc: Flutter Provider 아키텍쳐 가이드
+thumbnail: /posts/캡스톤디자인/2025-02-12/thumbnail.png
+tags:
+  - 'Flutter'
+  - 'Architecture Guide'
+seriesName: Code Convention
+---
+
+<Thumbnail src="/posts/캡스톤디자인/2025-02-12/thumbnail.png" />
+
+<Callout type="warn">Flutter Architecture Guide 2025: Provider Pattern - Capstone Design</Callout>
+
+## 에셋 폴더
+
+- **assets/**  
+  앱에서 사용하는 모든 에셋 파일을 정리합니다. 예: 폰트, 이미지, 아이콘, JSON 파일 등
+  - `font/` : 커스텀 폰트 파일(ttf, otf 등)
+  - `icon/` : 앱에서 사용하는 아이콘 파일(svg, png 등)
+  - `image/` : 일반 이미지 리소스(jpg, png 등)
+
+<Callout type="info">
+  **주의**: `pubspec.yaml` 파일의 `flutter:` 섹션에서 `assets/`에 대한 경로를 선언해주어야 앱에서 정상적으로 사용 가능합니다.
+</Callout>
+
+```dart title="pubspec.yaml" 
+flutter: 
+  ... 
+  assets: 
+    - assets/font/example.txt 
+    - assets/icon/example.txt 
+```
+
+---
+
+## 코어 폴더: `lib/`
+
+### 1. `main.dart`
+
+- Flutter 앱의 진입점(Entry Point)입니다. `runApp(MyApp())`을 호출하여 앱을 실행합니다.
+- `MultiProvider` 설정, MaterialApp 라우팅, 테마 설정 등을 초기화하는 곳입니다.
+
+### 2. `models/`
+
+- 데이터 모델을 정의하는 폴더입니다.
+- 예: `UserModel`, `ProductModel` 등
+- 주로 JSON 직렬화/역직렬화, 데이터 클래스, 엔티티를 정의합니다.
+
+### 3. `providers/`
+
+- Provider 패턴을 활용해 **상태 관리** 로직을 담당합니다.
+- `ChangeNotifier`를 상속받은 클래스를 생성하고, 앱 전체 또는 특정 위젯 트리에 주입하여 상태를 공유합니다.
+- 예: `UserProvider`, `AuthProvider`, `ThemeProvider` 등
+
+### 4. `screens/`
+
+- 앱의 **UI 화면**(Page, Screen)을 담당합니다.
+- 예: `HomeScreen`, `LoginScreen`, `ProfileScreen` 등
+- 각 스크린에서 `Provider.of<T>(context)`, `Consumer<T>` 등을 사용해 Provider 상태를 구독하여 UI를 업데이트합니다.
+
+### 5. `services/`
+
+- 비즈니스 로직, API 통신, 데이터베이스 접근 등 **핵심 로직**을 처리합니다.
+- 예: `ApiService`, `AuthService`, `LocalStorageService` 등
+- Provider(상태)와 상호작용하며, 외부 리소스와 연동하는 부분을 담당합니다.
+
+### 6. `utils/`
+
+- **재사용 가능한 유틸리티 코드**(함수, 상수, 포맷터 등)를 보관합니다.
+- 예: `constants.dart`(상수), `validators.dart`(입력값 검증), `date_formatter.dart`(날짜 포맷) 등
+- 특정 화면이나 로직에 국한되지 않고, 전역적으로 사용할 수 있는 헬퍼 코드가 들어갑니다.
+
+### 7. `widgets/`
+
+- **재사용 가능한 커스텀 위젯**을 보관합니다.
+- 예: `CustomButton`, `LoadingSpinner`, `CustomTextField` 등
+- 여러 화면에서 사용할 수 있도록 범용적으로 구현하여 코드의 중복을 줄입니다.
+
