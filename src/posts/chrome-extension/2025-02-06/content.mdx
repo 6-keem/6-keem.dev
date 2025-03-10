@@ -48,6 +48,11 @@ tags:
 
 확장 프로그램의 기능 수행에 필요한 한성대학교 LMS 웹 콘텐츠와 구글 캘린더 연동을 위한 인증정보 외에 추가적인 개인정보나 민감한 정보는 수집하지 않습니다.
 
+#### Google 사용자 데이터 보관/삭제 관련
+
+본 확장 프로그램은 Google OAuth2를 통해, 사용자가 ‘캘린더 연동’ 기능을 직접 요청한 경우에만 구글 캘린더에 접근하여 이벤트 정보를 가져옵니다. 이때 사용자의 캘린더 이벤트는 **중복 여부 확인**을 위해 일시적으로만 로드되며, **확인 후 별도로 저장하거나 외부에 전송되지 않고 즉시 폐기**됩니다.  
+즉, 어떠한 구글 사용자 데이터도 프로그램 내부·외부 서버에 보관하거나 공유하지 않으므로 별도의 삭제 절차가 필요하지 않습니다.
+
 ### 4. 수집된 데이터의 사용
 
 수집된 데이터는 오직 다음의 목적을 위해 사용됩니다:
@@ -106,6 +111,10 @@ All collected data—including Google Calendar integration credentials—is stor
 #### No Personal/Sensitive Data
 
 Beyond the necessary LMS web content and the credentials needed for Google Calendar integration, no additional personal or sensitive data is collected.
+
+#### Regarding Storage/Deletion of Google User Data
+
+When you choose to enable calendar synchronization, this extension accesses your Google Calendar via Google OAuth2 only to retrieve events in order to check for duplicates and add new events if no duplicates are found. **No Google Calendar event information is stored or shared**; data is loaded temporarily to perform duplication checks and then discarded immediately.
 
 ### 4. Use of Collected Data
 
