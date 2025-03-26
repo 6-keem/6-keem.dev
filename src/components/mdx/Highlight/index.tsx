@@ -44,10 +44,10 @@ export const Highlight: React.FC<HighlightProps> = ({ color, children }) => {
     return (
         <span
             style={{
-                background: `linear-gradient(to bottom, transparent 60%, ${backgroundColor} 60%, ${backgroundColor} 80%, transparent 80%)`,
-                display: 'inline-block',
-                position: 'relative',
-                padding: '0 2px',
+                background: `linear-gradient(to bottom, transparent 50%, ${backgroundColor} 50%, ${backgroundColor} 80%, transparent 80%)`,
+                display: 'inline',
+                boxDecorationBreak: 'clone',
+                WebkitBoxDecorationBreak: 'clone',
             }}
         >
             {children}
