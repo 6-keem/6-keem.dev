@@ -1,0 +1,238 @@
+---
+title: Spring 의존성 주입
+date: 2025-03-28
+desc: Spring Framework (2)
+thumbnail: /posts/Backend/2025-03-28/thumbnail.png
+tags:
+  - Spring
+  - Web Framework
+  - Dependency Injection
+seriesName: Spring Framework
+---
+
+<Thumbnail src="/posts/Backend/2025-03-28/thumbnail.png" />
+<Callout type="warn">**교과목 내용을 정리하기 위한 글입니다. 틀린 내용이 있을 수 있으니 참고하세요**</Callout>
+
+## 의존성이란?
+
+```java
+interface AnimalType {
+    ...
+}
+
+class Dog implements AnimalType {
+    ...
+}
+
+class PetOwner{
+    private AnimalType animal;
+
+    public PetOwner() {
+    	this.animal = new Dog();
+    }    
+}
+```
+
+이러한 경우 PetOwner는 AnimalType에 의존하게 된다.
+
+하지만 이러한 구조에는 문제가 있는데 다음과 같다.
+- PetOwner 객체가 AnimalType 객체 생성을 관리하기 때문에 두 객체 사이의 <Highlight color="LAVENDER">**Tight Coupling**</Highlight>이 발생한다.
+
+> 따라서 AnimalType 객체의 변경은 PetOwner의 변경을 야기한다
+
+## 의존성 주입 (Dependency Injection)
+
+앞선 문제점은 DI를 통해 해결할 수 있다. 
+
+![DI](/posts/Backend/2025-03-28/1.png)
+
+- Bean Container는 **Bean**을 생성하고, **의존성 주입**을 수행한다.
+- 의존성 주입도 **제어의 역전**(**IoC**)의 한 종류이다.
+
+따라서 코드는 다음과 같이 변화할 수 있다.
+
+```java
+class PetOwner{
+    private AnimalType animal;
+
+    public PetOwner(AnimalType animal) {
+    	this.animal = animal
+    }    
+}
+```
+
+> 따라서 의존성 주입(DI)는 객체가 자신의 의존성을 직접 처리하는 것이 아니라, **프레임워크에 의해 의존성이 주입**되는 디자인 패턴이다. 이 패턴은 프레임워크에 의해 동적으로 주입되기 때문에 여러 객체 간의 **결합도를 줄여준다.**
+
+## Spring (IoC) Container
+
+스프링 프레임워크의 **코어 컴포넌트**로 <Highlight color="LAVENDER">**객체 생성 관리**</Highlight>, <Highlight color="LAVENDER">**객체 의존성 주입**</Highlight>의 주요 기능을 갖고 있다.
+
+Spring Container의 구성하는 방법 세 가지
+- xml
+- Java annotation
+- Java-based Configuration
+
+Spring Container의 종류 두 가지
+- BeanFactory
+- ApplicationContext
+
+| **BeanFactory** | **ApplicationContext** |
+| ------- | ------- |
+| 매우 간단, 주로 DI를 위함 | 더 확장, 고급 기능 제공 |
+| 리소스가 제한된 경우 사용 (모바일...) | 아래 특징을 가진 어느곳애서든 사용 <br/>1. 엔터프라이즈 인식 기능<br/>2. 애플리케이션 이벤트를 리스너에 게시<br/>3. 요청 시 빈을 연결하고 폐기 |
+| org.springframework.beans.factory.BeanFactory | org.springframework.context.ApplicationContext |
+| XMLBeanFactory | <Highlight color="PEACH">**ClassPathXmlApplicationContext**</Highlight> |
+
+### 1. 전체 플로우
+
+![Spring Container and DI](/posts/Backend/2025-03-28/2.png)
+
+1. main 함수에서 ApplicationContext 객체 생성
+2. Spring Container가 Bean 생성
+3. 의존성 주입 수행
+
+### 2. Advantages of DI
+
+- <Highlight color = "PEACH">**의존성을 낮추어**</Highlight> 코드 변경 줄어듦
+- 코드 재사용성 증가
+- 테스트 용이 (mock implements를 주입시키면 되기 때문에)
+- 코드 가독성 증가
+
+## Bean이란?
+
+- 스프링에서 **POJO** 클래스를 <Highlight color="LAVENDER">**Bean**</Highlight>이라고 부름
+- Configuration metadata를 통해 **Spring Container에 의해 생성되고 관리**됨
+- getBean() 메서드로 객체에 접근할 수 있음
+
+### Spring Bean Definition
+
+| **Key** | **역할** |
+| ------- | ------- |
+| **class (required)** | 클래스 네임 구분 |
+| id | bean을 구분하는 식별자 |
+| scope | 객체의 범위 (singletone, prototype) |
+| constructor-arg | 객체 생성 시 넘겨줄 매개변수 | 
+| property | 생성 시 setter에 넘겨줄 매개변수 |
+| init, destory | 함수 |
+
+## Spring Annotation Based Configuration
+
+- Spring 2.5 이후에 개발되어 유명해짐
+- XML의 구성은 방대해질 수 있음
+- Default가 아니기에 설정이 필요
+- 빈 설정에서 XML이 어노테이션을 덮어쓴다 (**XML이 우선순위가 더 높음**)
+
+### 1. @Required
+
+- **Setter** 메소드에서만 가능
+
+```java
+public class Boy {
+    private String name;
+    private int age;
+
+    @Required
+    public void setName(String name){
+        this.name = name;
+    }
+    ...
+}
+```
+
+```xml
+<bean id=“boy” class=“Boy”>
+    <property name=“name” value=“Rony”/>
+    <property name=“age” value=“10”/>
+</bean>
+
+```
+
+### 2. @Autowired ⭐️
+
+#### xml 방식 
+```java
+public class College {
+    private Boy student; 
+
+    public void setStudent(Boy aboy){
+        this.stuendt = aboy;
+    }
+}
+```
+
+```xml
+<bean id=“college” class=“College”>
+    <property name=“student” ref=“boy”/>
+</bean>
+```
+
+#### <Highlight color="PEACH">Annotation 방식</Highlight>
+```java
+public class College {
+    @Autowired
+    private Boy student; 
+
+    // public void setStudent(Boy aboy){
+    //     this.stuendt = aboy;
+    // }
+}
+```
+
+```xml
+<bean id=“college” class=“College”>
+    <!-- <property name=“student” ref=“boy”/> -->
+</bean>
+```
+
+### 3. @Qualifier
+
+> @Autowired가 타입 모호성을 가질 때 사용
+
+```java
+public class College {
+    @Autowired
+    @Qualifier(value=“tony”)
+    private Boy student; 
+    ...
+}
+```
+
+```xml
+<bean id=“boy1” class=“Boy”>
+    <qualifier value=“rony”/>
+    <property name=“name” value=“Rony”/>
+    <property name=“age” value=“10”/>
+</bean>
+
+<bean id=“boy2” class=“Boy”>
+    <qualifier value=“tony”/>
+    <property name=“name” value=“Tony”/>
+    <property name=“age” value=“8”/>
+</bean>
+```
+
+### 4. @Resource
+
+- **@Resource**는 xml의 **id(name)**로 구분
+- **@Autowired**는 **클래스**로 구분
+
+다만 작동 방식은 동일함
+
+```java
+public class College {
+    @Resource(name=“boy1”)
+    private Boy student; 
+    ...
+}
+```
+
+## 결론
+
+1. POJO는 "Plain Old Java Object"로, 복잡한 구조나 규약 없이 간단한 Java 객체를 의미
+2. **빈**(**Bean**)은 Spring에서 관리하는 객체로, **Spring 컨테이너가 생성하고 관리**
+3. **제어의 역전**(**Inversion of Control**)은 **객체의 생성과 생명 주기**를 **Spring 컨테이너가 관리**하게 하는 디자인 패턴
+4. **의존성 주입**(**Dependency Injection, DI**)은 객체 간의 의존성을 외부에서 주입하여, 객체들이 **서로 독립적으로 동작(의존성을 낮춤)**할 수 있도록 도와줍니다.
+
+
+
+
