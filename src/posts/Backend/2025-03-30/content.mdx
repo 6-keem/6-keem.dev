@@ -1,0 +1,270 @@
+---
+title: Spring MVC Web Form
+date: 2025-03-30
+desc: Spring Framework (4)
+thumbnail: /posts/Backend/2025-03-30/thumbnail.png
+tags:
+  - Spring
+  - Web Framework
+  - Web Form
+seriesName: Spring Framework
+---
+
+<Thumbnail src="/posts/Backend/2025-03-30/thumbnail.png" />
+<Callout type="warn">**교과목 내용을 정리하기 위한 글입니다. 틀린 내용이 있을 수 있으니 참고하세요**</Callout>
+
+## Web Basics
+
+![](/posts/Backend/2025-03-30/1.png)
+
+**Request Parameter**란 사용자가 발행한 HTTP 요청 메시지의 일부분으로 전송됨
+
+두가지 전송 방식이 있음
+- **Query** string (GET Method)
+- HTTP entity **body** (POST Method)
+
+
+![GET](/posts/Backend/2025-03-30/2.png)
+
+![POST](/posts/Backend/2025-03-30/3.png)
+
+## Data Binding
+
+> 요청 파라미터에서 해당하는 객체로 어떻게 이동할 것인가?
+
+### 1. Naive solution
+**@RequestParam** annotation을 사용하여 requset parameter와 method parameter를 **바인딩** 할 수 있다.
+
+```java {2,3}
+@RequestMapping("/docreate")
+public String doCreate(@RequestParam("name") String name,
+                       @RequestParam("email") String email,
+                       Model model) {
+  ...
+  Offer offer = new Offer();
+
+  offer.setName(name);
+  offer.setEmail(email);
+  ...
+}
+```
+
+### 2. Spring Data Binding
+
+요청 파라미터를 form bean에 바인딩하는 과정으로, form에서 오는 데이터는 **자동**으로 객체에 바인딩 될 수 있음
+
+> 함수 파라미터에 객체를 선언하기만 하면 됨
+
+다음과 같은 작업들이 발생함
+- 새로운 form bean **인스턴스화됨**
+- form bean은 요청 파라미터로부터 **채워짐**
+- form bean은 모델에 **추가됨**
+
+![Data Binding](/posts/Backend/2025-03-30/4.png)
+- **offer** form bean은 모델에 **자동적으로 추가됨**
+- form bean은 모델 속성
+
+![Data Binding](/posts/Backend/2025-03-30/5.png)
+
+```html
+<html> 
+  <head> 
+    <title>Thanks</title> 
+  </head> 
+  <body> 
+    Hi, ${offer.name}. 
+    You have successfully registered. <br/> 
+  </body> 
+</html>
+```
+- 뷰에서도 접근, form bean을 랜더링할 수 있다.
+
+## Data Validation
+
+> 유저는 실수를 할 수 있다 그렇기에 에러를 설명하거나 유저가 이를 해결할 수 있도록 하고 싶다.
+
+### 1. Hibernate Validator
+사용자의 에러를 검출하기 위해, 폼 빈에 캡슐화된 **폼 데이터를 검증**해야함
+
+Bean Validation API (**JSR-303**)는 JavaBean 검증을 위한 API를 정의하는 명세입니다.
+- 폼 빈 속성에 선언적 검증 제약 조건을 주석으로 달 수 있습니다. (`@NotNull`, `@Pattern`, `@Size`)
+- **Hibernate Validator**는 몇가지 커스텀 annotation을 제공 (`@Email`)
+
+```java caption="Hibernate Validator"
+public class Offer {
+  private int id;
+
+  @Size(min=5, max=100)
+  @Pattern(regexp="^[A-Z]{1}[a-z]+$")
+  private String name;
+
+  @NotEmpty
+  @Email
+  private String email; 
+  ...
+}
+```
+
+### 2. Message Interpolation
+
+> 위반된 Bean Validation 제약 조건에 대해 오류 메시지를 생성하는 것
+
+![Message Interpolation](/posts/Backend/2025-03-30/6.png)
+
+> 각 속성의 **message descriptor**를 메시지 속성을 통해 정의할 수 있습니다
+
+```java
+public class Offer {
+
+  private int id;
+
+  @Size(min=5, max=100, message="Name must be between 5 and 100 characters")
+  private String name;
+
+  @Email(message="please provide a valid email address")
+  @NotEmpty(message="the email address cannot be empty")
+  private String email;
+
+  @Size(min=5, max=100, message="Text must be between 5 and 100 characters")
+  private String text;
+}
+```
+
+### 3. Validating Object
+
+검증은 @Valid 어노테이션을 통해 이루어짐
+
+@Valid 어노테이션은 객체가 먼저 검증된 후 모델에 추가되도록 함
+
+```java
+@RequestMapping(...)
+public String doCreate(@Valid Offer offer) { ... }
+```
+
+핸들러 메서드는 검증 과정의 결과를 나타내는 **BindingResult** 객체 요청 가능
+
+```java
+@RequestMapping(...)
+public String doCreate(@Valid Offer offer, BindingResult result ){ ... }
+```
+
+가능한 검증 오류를 확인하기 위해 BindingResult 객체 검사 가능
+```java {4}
+@RequestMapping(...)
+public String doCreate(@Valid Offer offer, BindingResult result) { 
+
+  if(result.hasErrors()) {
+    List<ObjectError> errors = result.getAllErrors();
+
+    for(ObjectError error:errors) {
+      System.out.println(error.getDefaultMessage());
+    }
+    return "createoffer";
+  }
+  ... 
+}
+```
+
+## Data Buffering
+
+> 사용자가 필수 입력 사항을 잊었을 때 처음부터 다시 입력해야하는가?
+
+### 1. Spring form tag library
+
+- 해당 내용을 웹 폼에 바인딩해야 함
+- Spring은 미리 채워진 폼 빈을 처리하기 위해 **데이터 바인딩을 지원하는 태그 세트**를 제공함
+
+![Spring form tag library](/posts/Backend/2025-03-30/7.png)
+
+해당 라이브러리 사용을 위해 JSP 페이지 최상단에 아래를 추가해야함
+
+```js caption="prefix는 sf ⚠️"
+<%@ taglib prefix=”sf" 
+	uri="http://www.springframework.org/tags/form"%>
+```
+
+| Spring form tag lib | HTML |
+| --- | --- |
+| `<sf:form>` | `<form>` |
+| `<sf:input>` | `<input type="text">` |
+| `<sf:password>` | `<input type="password">` |
+| `<sf:checkbox>` | `<input type="checkbox">` |
+
+### 2. Revised JSP
+
+다음은 앞선 라이브러리를 사용한 코드이다
+
+```js {1,5,6,11}
+<%@ taglib prefix=”sf" uri="http://www.springframework.org/tags/form"%>
+    ...
+  <body>
+
+  <sf:form method="post"
+  action="${pageContext.request.contextPath}/docreate" modelAttribute="offer">
+
+    <table class="formtable">
+    <tr>
+        <td class="label">Name:</td>
+        <td><sf:input class="control" path="name"/></td>
+    </tr>
+      ...
+  </sf:form>
+  </table>
+
+  </body>
+</html>
+```
+
+### 3. Revised Controller
+
+![initial Web Form](/posts/Backend/2025-03-30/8.png)
+
+![Web Form on Error](/posts/Backend/2025-03-30/9.png)
+
+### 4. Error Messages
+
+> 사용자에게 데이터가 거부된 이류를 알려주어야 함수
+
+![Error Messages](/posts/Backend/2025-03-30/10.png)
+
+이를 위해, BindingResult 객체는 자동으로 모델에 삽입되어 뷰로 다시 전송함
+
+- Spring MVC는 Spring의 폼 태그 라이브러리의 일환으로 `<sf:errors>` 태그 제공.
+- `<sf:erros>` 태그는 **BindingResult** 객체에서 가져온 HTML **오류 메시지를 렌더링**합니다.
+
+```html
+<sf:form modelAttribute="offer">
+
+Name: <sf:input path="name" />
+  <sf:errors path="name" />
+
+Email: <sf:input path="email" /> 
+	<sf:errors path="email" />
+...
+</sf:form>
+```
+
+```java
+public class Offer {
+
+  private int id;
+
+  @Size(min=5, max=100, message="Name must be between 5 and 100 characters")
+  private String name;
+
+  @Email(message="please provide a valid email address")
+  @NotEmpty(message="the email address cannot be empty")
+  private String email;
+
+  @Size(min=5, max=100, message="Text must be between 5 and 100 characters")
+  private String text;
+}
+```
+
+## Summary 
+
+폼 빈(Form beans)은 **여러 역할**을 동시에 수행할 수 있는 다재다능한 객체
+
+- 데이터 바인더(Data binder): 폼 데이터를 Java 객체에 바인딩하는 역할
+- 데이터 검증기(Data validator): 폼 데이터의 유효성을 검사하고 검증하는 역할
+- 데이터 버퍼(Data buffer): 폼 데이터가 임시로 저장되거나 관리되는 역할
