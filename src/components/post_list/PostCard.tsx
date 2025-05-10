@@ -27,6 +27,8 @@ const PostCard = ({ post }: Props) => {
             .replace(/(\r\n|\n|\r)/g, " ") // Replace newlines with a space
             .replace(/\s+/g, " ") // Replace multiple spaces with a single space
             .replace(/\**/g, "") // Replave bold syntax (**example**)
+            .replace(/\|/g, "")
+            .replace(/-+/g, "")
             .trim(); // Trim leading/trailing spaces
 
         return cleanContent;
