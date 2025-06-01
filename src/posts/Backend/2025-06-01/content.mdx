@@ -1,0 +1,194 @@
+---
+title: Restful Web Service with Spring
+date: 2025-06-01
+desc: Spring을 활용한 RESTful 웹 서비스 구현 방법
+thumbnail: /posts/Backend/2025-06-01/thumbnail.png
+tags:
+- Spring MVC
+- REST
+- RestController
+seriesName: Spring Framework
+---
+
+<Thumbnail src="/posts/Backend/2025-06-01/thumbnail.png" />
+<Callout type="warn">**교과목 내용을 정리하기 위한 글입니다. 틀린 내용이 있을 수 있으니 참고하세요**</Callout>
+
+## 1. Spring MVC vs RESTful 웹 서비스
+
+### 1.1 Spring MVC 전통적 워크플로우
+
+* 컨트롤러에서 뷰(View) 기술을 통해 모델 데이터를 렌더링
+* `Controller` + 뷰 템플릿
+
+### 1.2 RESTful 웹 서비스 컨트롤러
+
+* 컨트롤러 메서드가 객체를 반환하면, Spring이 JSON/XML으로 자동 직렬화하여 HTTP 응답 본문에 씀
+* `@RestController`, `@RequestBody`, `ResponseEntity`, `@PathVariable` 등을 사용하여 REST API 구현
+
+## 2. 주요 애너테이션
+
+### 2.1 @ResponseBody
+
+* 메서드에 붙이면 반환 값을 HTTP 응답 본문에 바인딩
+* 내부적으로 HTTP 메시지 컨버터를 사용해 객체를 JSON/XML으로 직렬화
+
+```java
+@Controller
+@RequestMapping("/api")
+public class RestApiController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/users")
+    @ResponseBody
+    public List<User> listAllUsers() {
+        return userService.getAllUsers();
+    }
+}
+```
+
+### 2.2 @RestController
+
+* `@Controller` + `@ResponseBody` 조합의 축약형
+* 클래스에 선언하면 메서드마다 `@ResponseBody`를 생략 가능
+
+```java
+@RestController
+@RequestMapping("/api")
+public class RestApiController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/users")
+    public List<User> listAllUsers() {
+        return userService.getAllUsers();
+    }
+}
+```
+
+### 2.3 @PathVariable
+
+* URI 경로에 있는 값을 메서드 파라미터로 바인딩
+
+```java
+@RestController
+@RequestMapping("/api")
+public class UserController {
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+}
+```
+
+## 3. ResponseEntity﹤T﹥
+
+* HTTP 응답 메시지 전체(상태 코드, 헤더, 본문)를 표현
+* 다양한 생성자 제공
+
+```java
+// 상태 코드만
+new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+// 본문 + 상태
+new ResponseEntity<>(bodyObject, HttpStatus.OK);
+
+// 본문 + 헤더 + 상태
+new ResponseEntity<>(bodyObject, headers, HttpStatus.CREATED);
+```
+
+## 4. @RequestBody
+
+* HTTP 요청 본문을 자바 객체로 역직렬화
+* HTTP 메시지 컨버터를 통해 JSON/XML → 객체 변환
+
+```java
+@PostMapping("/users")
+public ResponseEntity<Void> createUser(
+    @RequestBody User user,
+    UriComponentsBuilder ucBuilder) {
+
+    userService.save(user);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setLocation(
+        ucBuilder.path("/api/users/{id}")
+                 .buildAndExpand(user.getId()).toUri());
+
+    return new ResponseEntity<>(headers, HttpStatus.CREATED);
+}
+```
+
+## 5. CRUD 예제
+
+| 메서드    | URI          | 설명    |
+| ------ | ------------ | ----- |
+| GET    | /api/users   | 전체 조회 |
+| GET    | /api/users/1 | 단건 조회 |
+| POST   | /api/users   | 생성    |
+| PUT    | /api/users/3 | 수정    |
+| DELETE | /api/users/4 | 삭제    |
+| DELETE | /api/users   | 전체 삭제 |
+
+## 6. 의존성 관리 (pom.xml)
+
+```xml
+<!-- Jackson Databind: JSON↔객체 자동 변환 -->
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.16.2</version>
+</dependency>
+<!-- Spring Web 포함 (DispatcherServlet, Tomcat 포함) -->
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+## 7. REST 클라이언트 테스트 (Postman)
+
+* 요청(Request) 작성
+* 응답(Response) 확인
+
+## 8. REST API 예시 컨트롤러
+
+```java
+@RestController
+@RequestMapping("/api/offers")
+public class OfferRestController {
+
+    @Autowired
+    private OfferService offerService;
+
+    // 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<Offer> getOffer(@PathVariable("id") int id) {
+        Offer offer = offerService.getById(id);
+        if (offer == null) {
+            throw new OfferNotFoundException(id);
+        }
+        return new ResponseEntity<>(offer, HttpStatus.OK);
+    }
+
+    // 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Offer> updateOffer(
+        @PathVariable("id") int id,
+        @RequestBody Offer offer) {
+
+        Offer current = offerService.getById(id);
+        if (current == null) {
+            throw new OfferNotFoundException(id);
+        }
+        current.setName(offer.getName());
+        current.setEmail(offer.getEmail());
+        current.setText(offer.getText());
+        offerService.save(current);
+        return new ResponseEntity<>(current, HttpStatus.OK);
+    }
+}
+```
