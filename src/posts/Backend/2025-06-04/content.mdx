@@ -1,0 +1,241 @@
+---
+
+title: 첫 번째 Spring Boot 애플리케이션
+date: 2025-06-04
+desc: Spring Initializr, 프로젝트 구조, Maven 설정부터 MVC, 프로퍼티 바인딩까지
+thumbnail: /posts/Backend/2025-06-04/thumbnail.png
+tags:
+- Spring Boot
+- Spring
+- Maven
+seriesName: Spring Framework
+---
+
+<Thumbnail src="/posts/Backend/2025-06-04/thumbnail.png" />
+<Callout type="warn">**교과목 내용을 정리하기 위한 글입니다. 틀린 내용이 있을 수 있으니 참고하세요**</Callout>
+
+## 1. Spring Initializr 사용
+
+Spring Boot 프로젝트 생성을 위한 온라인 도구<br />
+[https://start.spring.io](https://start.spring.io)
+
+1. 웹사이트에서 프로젝트 설정
+2. Generate 버튼 클릭 → ZIP 파일 다운로드
+3. 압축 해제 후 IDE(Maven) 프로젝트로 임포트
+
+IntelliJ IDEA에서는 File → New → Project → Spring Boot 선택으로 직접 생성 가능
+
+## 2. 프로젝트 구조
+
+```
+helloSpringBoot
+├── src
+│   ├── main
+│   │   ├── java         # 자바 소스 코드
+│   │   └── resources    # 설정 파일, 템플릿, 정적 리소스
+│   │       ├── static   # CSS, JS, 이미지 등 웹 정적 콘텐츠
+│   │       └── templates# Thymeleaf 템플릿
+│   └── test
+│       └── java         # 테스트 코드
+├── pom.xml              # Maven 빌드 설정
+└── mvnw*                # Maven Wrapper
+```
+
+> **주의:** JAR 패키징 시 `/src/main/webapp` 디렉터리는 사용하지 마세요. WAR 전용이며 JAR로 패키징하면 무시됩니다.
+
+## 3. `pom.xml` 살펴보기
+
+```xml
+<project>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.4.4</version>
+    <relativePath/> <!-- 부모 POM 참조 -->
+  </parent>
+
+  <groupId>kr.ac.hansung.cse</groupId>
+  <artifactId>helloSpringBoot</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>helloSpringBoot</name>
+  <description>Demo project for Spring Boot</description>
+
+  <properties>
+    <java.version>21</java.version>
+  </properties>
+
+  <dependencies>
+    <!-- Thymeleaf 템플릿 엔진 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+
+    <!-- Spring Web, 내장 Tomcat 포함 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Lombok (옵셔널) -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- 테스트용 -> scope=test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- 실행 가능한 JAR 생성 -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+```
+
+* `spring-boot-starter-web` 기본으로 `DispatcherServlet`을 `/`에 매핑하고, 내장 Tomcat(포트 8080)을 추가합니다.
+* `mvn package` 실행 시 `spring-boot:repackage`가 자동 수행되어 실행 가능한 JAR 생성
+
+## 4. 애플리케이션 실행
+
+### 옵션 1: 실행 가능한 JAR
+
+```bash
+java -jar target/helloSpringBoot-0.0.1-SNAPSHOT.jar
+```
+
+### 옵션 2: Maven 플러그인 사용
+
+```bash
+mvn spring-boot:run
+```
+
+## 5. 진입점 클래스 (EntryPoint)
+
+`@SpringBootApplication` 애노테이션을 사용합니다:
+
+```java
+@SpringBootApplication
+public class HelloSpringBootApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(HelloSpringBootApplication.class, args);
+  }
+}
+```
+
+* `@SpringBootApplication` = `@EnableAutoConfiguration` + `@ComponentScan` + `@Configuration`
+* 애플리케이션 컨텍스트 생성, 빈 등록, 내장 서버(Tomcat) 시작
+
+### WebApplicationType
+
+* `NONE`: 웹 애플리케이션 비실행
+* `SERVLET`: 서블릿 기반 웹 애플리케이션 (기본 값)
+* `REACTIVE`: 리액티브 웹 애플리케이션
+
+```properties
+spring.main.web-application-type=servlet
+```
+
+## 6. 컴포넌트 스캔
+
+* 기본적으로 `@SpringBootApplication`이 선언된 패키지와 그 하위 패키지를 스캔
+* 다른 패키지도 스캔하려면:
+
+```java
+@SpringBootApplication(
+  scanBasePackages={
+    "kr.ac.hansung.cse.hellospringboot",
+    "com.mypackage.springapp",
+    "kr.ac.hansung.iot"
+  }
+)
+public class HelloSpringBootApplication { ... }
+```
+
+## 7. Spring MVC 예제
+
+### 컨트롤러 정의
+
+```java
+@Controller
+public class HomeController {
+  @GetMapping("/")
+  public String home(Model model) {
+    model.addAttribute("message", "hello world");
+    return "index";
+  }
+}
+```
+
+### Thymeleaf 템플릿 (`src/main/resources/templates/index.html`)
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <div th:text="${message}"></div>
+</body>
+</html>
+```
+
+## 8. 정적 콘텐츠 및 템플릿
+
+* **정적 리소스**: `/static`, `/public` 디렉터리에서 서빙 (CSS, JS, 이미지)
+* **템플릿**: `/templates` 디렉터리에서 Thymeleaf 등 템플릿 엔진 사용
+
+## 9. 애플리케이션 프로퍼티
+
+`src/main/resources/application.properties`에 설정:
+
+```properties
+# 서버 포트 및 컨텍스트 경로
+server.port=9000
+server.servlet.context-path=/helloSpringBoot
+
+# 로깅 레벨
+logging.level.kr.ac.hansung=debug
+
+# 커스텀 프로퍼티
+app.professor=Namyun Kim
+app.course=Web Framework
+```
+
+### 프로퍼티 바인딩
+
+#### 방법 1: `@Value`
+
+```java
+@Value("${app.professor}")
+private String professor;
+```
+
+#### 방법 2: `@ConfigurationProperties`
+
+```java
+@Configuration
+@ConfigurationProperties(prefix="jdbc")
+public class DataSourceConfig {
+  private String driver;
+  private String url;
+  private String username;
+  private String password;
+  // getters/setters
+}
+```
+
+> `jdbc.driver`, `jdbc.url` 등 `jdbc.*` 프로퍼티가 자동 바인딩됩니다.
