@@ -1,16 +1,15 @@
 ---
-title: Spring Security in Spring Boot 3
+title: 스프링 시큐리티
 date: 2025-06-11
 desc: Spring Boot 3 환경에서 Spring Security 설정 및 활용 방법 정리
 thumbnail: /posts/Backend/2025-06-11/thumbnail.png
 tags:
-- Spring Security
-- Spring Boot
-- Security
+  - Spring Security
+  - Spring Boot
+  - Security
 seriesName: Spring Framework
 ---
 
-<Thumbnail src="/posts/Backend/2025-06-11/thumbnail.png" />
 <Callout type="warn">**교과목 내용을 정리하기 위한 글입니다. 틀린 내용이 있을 수 있으니 참고하세요**</Callout>
 
 ## 1. 소개
@@ -36,8 +35,8 @@ Spring Security는 Java 애플리케이션을 위한 보안 프레임워크로, 
 </dependency>
 ```
 
-* `spring-boot-starter-security`는 Spring Security 관련 의존성을 묶어 제공하며, 기본적인 보안 필터 체인을 자동 구성합니다.
-* `/css/**`, `/js/**`, `/images/**` 등 정적 리소스 경로는 인증 없이 접근할 수 있도록 기본 제외됩니다.
+- `spring-boot-starter-security`는 Spring Security 관련 의존성을 묶어 제공하며, 기본적인 보안 필터 체인을 자동 구성합니다.
+- `/css/**`, `/js/**`, `/images/**` 등 정적 리소스 경로는 인증 없이 접근할 수 있도록 기본 제외됩니다.
 
 ### 2.2 기본 사용자 설정
 
@@ -92,18 +91,17 @@ public class HomeController {
 
 ```html
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
-<head>
-  <title>Spring Security 튜토리얼</title>
-</head>
-<body>
-  <h2>Welcome</h2>
-  <div sec:authorize="hasRole('USER')">User에게만 보이는 텍스트</div>
-  <div sec:authorize="hasRole('ADMIN')">Admin에게만 보이는 텍스트</div>
-  <div sec:authorize="isAuthenticated()">인증된 사용자만 보이는 텍스트</div>
-  <p>인증된 사용자: <span sec:authentication="name"></span></p>
-</body>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <title>Spring Security 튜토리얼</title>
+  </head>
+  <body>
+    <h2>Welcome</h2>
+    <div sec:authorize="hasRole('USER')">User에게만 보이는 텍스트</div>
+    <div sec:authorize="hasRole('ADMIN')">Admin에게만 보이는 텍스트</div>
+    <div sec:authorize="isAuthenticated()">인증된 사용자만 보이는 텍스트</div>
+    <p>인증된 사용자: <span sec:authentication="name"></span></p>
+  </body>
 </html>
 ```
 
@@ -236,9 +234,9 @@ BCrypt는 자동으로 랜덤 솔트를 생성하여 같은 평문이라도 매�
 
 ## 9. CSRF 보호
 
-* Spring Security는 기본적으로 CSRF 보호를 활성화합니다.
-* Thymeleaf 폼에서 `th:action`과 POST/PUT/DELETE 메서드를 사용하면 CSRF 토큰이 자동 삽입됩니다.
-* 비활성화 시:
+- Spring Security는 기본적으로 CSRF 보호를 활성화합니다.
+- Thymeleaf 폼에서 `th:action`과 POST/PUT/DELETE 메서드를 사용하면 CSRF 토큰이 자동 삽입됩니다.
+- 비활성화 시:
 
 ```java
 http.csrf(csrf -> csrf.disable());

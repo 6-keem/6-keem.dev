@@ -133,7 +133,9 @@ export const getPostDetail = async (category: string, slug: string) => {
 };
 
 export const parseToc = (content: string): HeadingItem[] => {
-  const regex = /^(##|###) (.*$)/gim;
+  const regex = /^(##) (.*$)/gim;
+  // NOTE: h3도 포함
+  // const regex = /^(##|###) (.*$)/gim;
   const headingList = content.match(regex);
   return (
     headingList?.map((heading: string) => ({
