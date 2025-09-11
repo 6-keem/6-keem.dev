@@ -1,4 +1,5 @@
-import { getPostByDate, getPostList, getSortedPostList } from "@/lib/post";
+import { Post } from '@/config/types';
+import { getPostDetail, getPosts } from '@/lib/supabase-function';
 
 const svgStyles = `
   @keyframes heartBeat {
@@ -26,44 +27,48 @@ const svgStyles = `
 `;
 
 export default async function BlogBadge({
-    width,
-    height,
-    date,
+  width,
+  height,
+  date,
+  category,
 }: {
-    width: string;
-    height: string;
-    date?: string | null;
+  width: string;
+  height: string;
+  category?: string | null;
+  date?: string | null;
 }) {
-    const post = await getPostByDate(date);
-    let currentX = 22;
+  let post: Post;
+  if (category && date) {
+    post = (await getPostDetail(category, date))[0];
+  } else {
+    post = (await getPosts())[0];
+  }
+  let currentX = 22;
 
-    // 태그에 대한 SVG 요소 생성
-    const mappedRects = post.tags
-        .map((item, index) => {
-            const approxCharWidth = 8;
-            let horizontalPadding = 4;
+  // 태그에 대한 SVG 요소 생성
+  const mappedRects = post.tag
+    .map((item, index) => {
+      const approxCharWidth = 8;
+      let horizontalPadding = 4;
 
-            const hasKorean = /[가-힣]/.test(item);
-            const hasJapanese = /[\u3040-\u30FF\u4E00-\u9FFF]/.test(item);
-    
-            if (hasKorean || hasJapanese) {
-                horizontalPadding = 10; 
-            }
-            
-            const rectHeight = 22;
-            const gapBetweenRects = 4;
-            const textWidth = item.length * approxCharWidth;
-            const rectWidth = textWidth * 0.8 + 4 * horizontalPadding;
+      const hasKorean = /[가-힣]/.test(item);
+      const hasJapanese = /[\u3040-\u30FF\u4E00-\u9FFF]/.test(item);
 
+      if (hasKorean || hasJapanese) {
+        horizontalPadding = 10;
+      }
 
-            const rectY = 90;
-            const textCenterX = currentX + rectWidth / 2;
-            const textCenterY = rectY + rectHeight / 2 + 1;
+      const rectHeight = 22;
+      const gapBetweenRects = 4;
+      const textWidth = item.length * approxCharWidth;
+      const rectWidth = textWidth * 0.8 + 4 * horizontalPadding;
 
-            const svgFragment = `
-        <g class="tag-group" style="animation: fadeIn 0.5s ease-out ${
-            index * 0.1
-        }s both;">
+      const rectY = 90;
+      const textCenterX = currentX + rectWidth / 2;
+      const textCenterY = rectY + rectHeight / 2 + 1;
+
+      const svgFragment = `
+        <g class="tag-group" style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
           <rect
             x="${currentX}"
             y="${rectY}"
@@ -88,12 +93,12 @@ export default async function BlogBadge({
           </text>
         </g>
       `;
-            currentX += rectWidth + gapBetweenRects;
-            return svgFragment;
-        })
-        .join("");
+      currentX += rectWidth + gapBetweenRects;
+      return svgFragment;
+    })
+    .join('');
 
-    return `
+  return `
     <svg
       class="svg-fade-in"
       width="${width}"
@@ -134,11 +139,7 @@ export default async function BlogBadge({
         font-size="14"
         font-weight="bold"
       >
-        ${
-            post.title.length >= 50
-                ? post.title.slice(0, 50) + "..."
-                : post.title
-        }
+        ${post.title.length >= 50 ? post.title.slice(0, 50) + '...' : post.title}
       </text>
       <text
         x="25"
@@ -148,7 +149,7 @@ export default async function BlogBadge({
         font-weight="lighter"
       >
         <tspan>
-        ${post.desc.length >= 60 ? post.desc.slice(0, 60) + "..." : post.desc}
+        ${post.description.length >= 60 ? post.description.slice(0, 60) + '...' : post.description}
         </tspan>
       </text>
 

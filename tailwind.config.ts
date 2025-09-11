@@ -72,6 +72,7 @@ const config = {
         text: {
           selected: 'var(--text-selected)',
           unselected: 'var(--text-unselected)',
+          hovered: 'var(--text-hovered)',
         },
       },
       typography: {

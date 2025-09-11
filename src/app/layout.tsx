@@ -9,6 +9,10 @@ import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { Suspense } from 'react';
 import Loading from './loading';
 import { SessionProvider } from 'next-auth/react';
+import { SidebarProvider } from '@/components/provider/SidebarProvider';
+import Main from '@/components/layout/Main';
+import { TocProvider } from '@/components/provider/TocProvider';
+import Sidebar from '@/components/nav/Sidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = blogName;
@@ -35,26 +39,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="h-full scroll-my-20 scroll-smooth bg-secondary"
-      style={{ overscrollBehaviorX: 'auto', overscrollBehaviorY: 'none' }}
-      suppressHydrationWarning
-    >
-      <body className="flex flex-col min-h-screen antialiased" style={{ overscrollBehaviorX: 'auto', overscrollBehaviorY: 'none' }}>
+    <html lang="en" className="h-full scroll-my-20 scroll-smooth bg-background" suppressHydrationWarning>
+      <body className="flex flex-col min-h-screen antialiased">
         <MyThemeProvider>
-          <ScrollProvider>
-            <SessionProvider>
-              <Header />
-              <Suspense fallback={<Loading />}>
-                <main className="flex-1 min-h-screen pt-[64px] pb-[48px] relative">
-                  {children}
-                  {/* <GlowBackground /> */}
-                </main>
-              </Suspense>
-              <Footer />
-            </SessionProvider>
-          </ScrollProvider>
+          <TocProvider>
+            <ScrollProvider>
+              <SessionProvider>
+                <SidebarProvider>
+                  <Header />
+                  <Suspense fallback={<Loading />}>
+                    <Sidebar />
+                    <Main>{children}</Main>
+                  </Suspense>
+                  <Footer />
+                </SidebarProvider>
+              </SessionProvider>
+            </ScrollProvider>
+          </TocProvider>
         </MyThemeProvider>
       </body>
     </html>

@@ -1,32 +1,36 @@
-import { PostBody } from "@/components/post_detail/PostBody";
-import { PostFooter } from "@/components/post_detail/PostFooter";
-import { PostHeader } from "@/components/post_detail/PostHeader";
-import TocContent from "@/components/sidebar/toc/TocContentSidebar";
-import { getPostDetail, getSortedPostList, parseToc } from "@/lib/post";
+import { PostBody } from '@/components/post_detail/PostBody';
+import { PostFooter } from '@/components/post_detail/PostFooter';
+import { PostHeader } from '@/components/post_detail/PostHeader';
+import { TocRegistrar } from '@/components/post_list/TocRegister';
+import { parseToc } from '@/lib/post';
+import { getPosts } from '@/lib/supabase-function';
 
 type Props = Promise<{
-    category: string;
-    slug: string;
+  category: string;
+  slug: string;
 }>;
 
 const PostDetail = async ({ params }: { params: Props }) => {
-    const category = (await params).category;
-    const slug = (await params).slug;
+  const category = decodeURIComponent((await params).category);
+  const slug = decodeURIComponent((await params).slug);
 
-    const post = await getPostDetail(category, slug);
-    const posts = (await getSortedPostList(category)).reverse();
-    const toc = parseToc(post.content);
-    return (
-        <div className="prose mx-auto w-full max-w-[750px] px-5 dark:prose-invert sm:px-6">
-            <PostHeader post={post} />
-            <article className="relative">
-                {/* <SidebarContent /> */}
-                <PostBody post={post} posts={posts} />
-                <TocContent toc={toc} />
-            </article>
-            <PostFooter post={post} posts={posts} />
-        </div>
-    );
+  const post = await getPosts(category);
+  const currentPost = post.find((post) => {
+    return post.date === slug;
+  })!;
+  const toc = parseToc(currentPost.content);
+  return (
+    <div className="prose mx-auto w-full max-w-screen-xl px-5 dark:prose-invert sm:px-6">
+      <TocRegistrar toc={toc} />
+      <div className=" mx-auto w-full max-w-[1080px]">
+        <PostHeader post={currentPost} />
+        <article className="relative">
+          <PostBody currentPost={currentPost} posts={post} />
+        </article>
+      </div>
+      <PostFooter post={currentPost} posts={post} />
+    </div>
+  );
 };
 
 export default PostDetail;
