@@ -21,7 +21,7 @@ const PostListPage = async ({ category }: PostListProps) => {
   const remainingPosts = postList.length > 4 ? postList.slice(4) : [];
 
   return (
-    <section className="mx-auto mt-12 w-full max-w-[1440px] px-12 flex flex-col gap-y-10">
+    <section className="mx-auto mt-12 w-full max-w-[1440px] px-4 md:px-12 flex flex-col gap-y-10">
       <div className="flex justify-between">
         <CategoryList allPostCount={allPostCount} categoryList={categoryList} currentCategory={category} />
       </div>

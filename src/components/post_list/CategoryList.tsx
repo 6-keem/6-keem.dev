@@ -23,7 +23,7 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = 'All' }: C
   return (
     <div className="flex-col flex gap-y-6 w-full">
       <section className="flex flex-col justify-center">
-        <div className="text-5xl font-normal text-primary">{`${currentCategory}`}</div>
+        <div className="text-5xl font-normal text-primary px-2">{`${currentCategory}`}</div>
         {/* <div className="text-2xl font-thin">{`
                 ${
                   currentCategory === 'All'
@@ -31,16 +31,18 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = 'All' }: C
                   : categoryList.find((category) => category.dirName === currentCategory)?.count || 0
                   } posts`}</div> */}
       </section>
-      <section className="flex w-full justify-between items-center">
-        <ul className="flex gap-6">
-          <CategoryButton href="/blog" isCurrent={currentCategory === 'All'} displayName="All" />
-          {categoryList.map((cg, index) => (
-            <CategoryButton key={index} href={`/blog/${cg}`} displayName={cg} isCurrent={cg === currentCategory} />
-          ))}
-        </ul>
-        <Toolbar />
+      <section className="w-full hidden md:block pl-2">
+        <div className="flex w-full justify-between items-center ">
+          <ul className="flex gap-6">
+            <CategoryButton href="/blog" isCurrent={currentCategory === 'All'} displayName="All" />
+            {categoryList.map((cg, index) => (
+              <CategoryButton key={index} href={`/blog/${cg}`} displayName={cg} isCurrent={cg === currentCategory} />
+            ))}
+          </ul>
+          <Toolbar />
+        </div>
       </section>
-      <section className="mb-6 sm:hidden">
+      <section className="mb-2 md:hidden px-2">
         <Select onValueChange={onCategoryChange} defaultValue={currentCategory}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Theme" />
