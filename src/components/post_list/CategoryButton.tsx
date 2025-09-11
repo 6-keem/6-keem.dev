@@ -4,7 +4,6 @@ interface Props {
   isCurrent: boolean;
   displayName: string;
   href: string;
-  count: number;
 }
 
 export const CategoryButton = ({ isCurrent, displayName, href }: Props) => {

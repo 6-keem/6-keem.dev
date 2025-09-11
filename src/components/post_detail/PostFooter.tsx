@@ -10,17 +10,18 @@ interface Prop {
 }
 
 export const PostFooter = ({ post, posts }: Prop) => {
-  const currentIndex = posts.findIndex((p) => p.title === post.title);
+  const reversedPosts = posts.reverse();
+  const currentIndex = reversedPosts.findIndex((p) => p.title === post.title);
 
-  const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
-  const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+  const prevPost = currentIndex > 0 ? reversedPosts[currentIndex - 1] : null;
+  const nextPost = currentIndex < reversedPosts.length - 1 ? reversedPosts[currentIndex + 1] : null;
 
   return (
     <footer className="mt-8">
       <hr className="pt-0 mt-0 border-t border-gray-200 dark:border-gray-700" />
       <div className="grid grid-cols-2 gap-4 mt-8 mb-16">
         {prevPost ? (
-          <Link href={`/blog/${prevPost.categoryPublicName}/${prevPost.slug}`} className="col-start-1 no-underline">
+          <Link href={`/blog/${prevPost.category}/${prevPost.date}`} className="col-start-1 no-underline">
             <Card className="h-full transition-all duration-300 ease-in-out shadow-none hover:shadow-md hover:-translate-y-1">
               <div className="flex items-center h-full overflow-hidden">
                 <div className="flex-shrink-0 flex items-center justify-center p-4 ml-1">
@@ -40,7 +41,7 @@ export const PostFooter = ({ post, posts }: Prop) => {
         )}
 
         {nextPost ? (
-          <Link href={`/blog/${nextPost.categoryPublicName}/${nextPost.slug}`} className="col-start-2 no-underline">
+          <Link href={`/blog/${nextPost.category}/${nextPost.date}`} className="col-start-2 no-underline">
             <Card className="h-full transition-all duration-300 ease-in-out shadow-none hover:shadow-md hover:-translate-y-1">
               <div className="flex items-center h-full overflow-hidden">
                 <div className="flex-grow min-w-0">

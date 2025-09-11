@@ -47,7 +47,7 @@ export default function Sidebar() {
     >
       <div className="p-4">
         <motion.ul key={currentPath} variants={containerVariants} initial="hidden" animate="visible">
-          {currentPath.split('/').length !== 2 && (
+          {currentPath.split('/').length !== 2 && currentPath.includes('blog') && (
             <motion.li variants={itemVariants}>
               <Link
                 href={'/blog'}

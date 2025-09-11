@@ -1,12 +1,11 @@
 'use client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CategoryButton } from './CategoryButton';
-import { CategoryDetail } from '@/config/types';
 import { useRouter } from 'next/navigation';
 import Toolbar from './Toolbar';
 
 interface CategoryListProps {
-  categoryList: CategoryDetail[];
+  categoryList: string[];
   allPostCount: number;
   currentCategory?: string;
 }
@@ -34,15 +33,9 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = 'All' }: C
       </section>
       <section className="flex w-full justify-between items-center">
         <ul className="flex gap-6">
-          <CategoryButton href="/blog" isCurrent={currentCategory === 'All'} displayName="All" count={allPostCount} />
-          {categoryList.map((cg) => (
-            <CategoryButton
-              key={cg.dirName}
-              href={`/blog/${cg.dirName}`}
-              displayName={cg.publicName}
-              isCurrent={cg.dirName === currentCategory}
-              count={cg.count}
-            />
+          <CategoryButton href="/blog" isCurrent={currentCategory === 'All'} displayName="All" />
+          {categoryList.map((cg, index) => (
+            <CategoryButton key={index} href={`/blog/${cg}`} displayName={cg} isCurrent={cg === currentCategory} />
           ))}
         </ul>
         <Toolbar />
@@ -54,9 +47,9 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = 'All' }: C
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All">All</SelectItem>
-            {categoryList.map((cg) => (
-              <SelectItem key={cg.dirName} value={cg.dirName}>
-                {cg.publicName}
+            {categoryList.map((cg, index) => (
+              <SelectItem key={index} value={cg}>
+                {cg}
               </SelectItem>
             ))}
           </SelectContent>

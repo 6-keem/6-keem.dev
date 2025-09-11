@@ -23,7 +23,9 @@ export const NavbarContent = () => {
   return (
     <div className="flex h-[64px] w-full items-center justify-between px-5 md:px-8 z-20 bg-background">
       <div className="flex space-x-4">
-        <p className="font-bold text-2xl">KEEM</p>
+        <Link href={'/blog'}>
+          <p className="font-bold text-2xl">KEEM</p>
+        </Link>
         <Button
           onClick={toggle}
           variant={'ghost'}

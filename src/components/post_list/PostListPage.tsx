@@ -1,56 +1,24 @@
 import React from 'react';
 import CategoryList from './CategoryList';
 import PostCard from './PostCard';
-import { getAllPostCount, getCategoryDetailList, getSortedPostList } from '@/lib/post';
 import { auth } from '@/lib/auth';
 import { Post } from '@/config/types';
 import { Session } from 'next-auth';
+import { getCategoryList, getPosts } from '@/lib/supabase-function';
 
 interface PostListProps {
   category?: string;
 }
 
-export interface PostWithVisibility extends Post {
-  visibility: 'public' | 'private';
-}
-
-export const PRIVATE_CATEGORY = ['日本生活🔰'];
-
-const getIsAuthorized = (session: Session | null): boolean => {
-  if (!session) return false;
-
-  if (session.user?.email === '6ukeem@gmail.com') return true;
-
-  const follwers = session.user?.followers;
-  if (!follwers || follwers.length === 0) return false;
-
-  follwers.map((follwer) => {
-    if (follwer.login === '6-keem') return true;
-  });
-  return false;
-};
-
-const getIsPrivate = (categoryName: string) => {
-  return PRIVATE_CATEGORY.includes(categoryName);
-};
-
 const PostListPage = async ({ category }: PostListProps) => {
-  const postList: Post[] = await getSortedPostList(category);
-  const categoryList = await getCategoryDetailList();
-  const allPostCount = await getAllPostCount();
-  const session = await auth();
-  const isAuthorized = getIsAuthorized(session);
-  const visibilityPostList: PostWithVisibility[] = postList.map((post) => {
-    const visibilityPost: PostWithVisibility = {
-      ...post,
-      visibility: isAuthorized ? 'public' : getIsPrivate(post.categoryPublicName) ? 'private' : 'public',
-    };
-    return visibilityPost;
-  });
+  const postList: Post[] = await getPosts(category);
+  const categoryList: string[] = await getCategoryList();
 
-  const mainPost = visibilityPostList.length > 0 ? visibilityPostList[0] : null;
-  const subPosts = visibilityPostList.length > 1 ? visibilityPostList.slice(1, 4) : [];
-  const remainingPosts = visibilityPostList.length > 4 ? visibilityPostList.slice(4) : [];
+  const allPostCount = postList.length;
+
+  const mainPost = postList.length > 0 ? postList[0] : null;
+  const subPosts = postList.length > 1 ? postList.slice(1, 4) : [];
+  const remainingPosts = postList.length > 4 ? postList.slice(4) : [];
 
   return (
     <section className="mx-auto mt-12 w-full max-w-[1440px] px-12 flex flex-col gap-y-10">
@@ -66,8 +34,8 @@ const PostListPage = async ({ category }: PostListProps) => {
             </div>
 
             <div className="lg:col-span-1 flex flex-col gap-y-8">
-              {subPosts.map((post) => (
-                <PostCard key={post.uniqueKey} post={post} />
+              {subPosts.map((post, index) => (
+                <PostCard key={index} post={post} />
               ))}
             </div>
           </div>
@@ -75,8 +43,8 @@ const PostListPage = async ({ category }: PostListProps) => {
 
         {remainingPosts.length > 0 && (
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-2 mt-16">
-            {remainingPosts.map((post) => (
-              <PostCard key={post.uniqueKey} post={post} />
+            {remainingPosts.map((post, index) => (
+              <PostCard key={index} post={post} />
             ))}
           </ul>
         )}
