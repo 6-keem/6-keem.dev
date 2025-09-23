@@ -1,11 +1,11 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getCareerProjectList, getSortedProjectList } from '@/lib/project';
-import { DATAS, Locale } from '@/config/types';
+import { DATAS, type Locale } from '@/config/types';
 import LanguageSelector from '@/components/about/language-selector';
 import ProjectList from '@/components/about/project-list';
 import CopyLinkButton from '@/components/common/CopyLinkButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { GlobeIcon, MailIcon } from 'lucide-react';
+import { BadgeCheck, GlobeIcon, MailIcon } from 'lucide-react';
 import * as D from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Section } from '@/components/ui/section';
@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: { params: Props }): Promise<M
     description: data.summary,
   };
 }
+
 export default async function AboutPage({ params }: { params: Props }) {
   const { locale } = await params;
   const RESUME_DATA = DATAS[locale].data;
@@ -44,26 +45,27 @@ export default async function AboutPage({ params }: { params: Props }) {
       <Section className="mx-auto w-full max-w-4xl space-y-16 print:space-y-4">
         <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
           <div className="flex-1 space-y-1.5 text-center sm:text-start">
-            <h1 className="mb-4 text-5xl font-bold">{RESUME_DATA.about}</h1>
-            <p className="max-w-md text-2xl text-pretty text-muted-foreground print:text-[12px]">{RESUME_DATA.name}</p>
+            <h1 className="mb-4 text-3xl lg:text-5xl font-bold">{RESUME_DATA.about}</h1>
+            <p className="max-w-md text-lg lg:text-2xl text-pretty text-muted-foreground print:text-[12px]">{RESUME_DATA.name}</p>
             <p className="max-w-md items-center text-pretty text-sm text-muted-foreground">
               <a
-                className="inline-flex items-center gap-x-1.5 align-baseline leading-none hover:underline"
+                className="inline-flex text-sm lg:text-md items-center gap-x-1.5 align-baseline leading-none hover:underline"
                 href={RESUME_DATA.locationLink}
                 target="_blank"
+                rel="noreferrer"
               >
                 <GlobeIcon className="size-3" />
                 {RESUME_DATA.location}
               </a>
             </p>
             <div className="flex justify-center items-center gap-1.5 pt-1 m-0 text-sm text-muted-foreground sm:justify-start print:hidden">
-              <a href="/" target="_blank" className="font-semibold">
+              <a href="/" target="_blank" className="font-semibold" rel="noreferrer">
                 <span className="bg-blue-700 text-white p-0 w-full px-1 pl-1.5 py-1.5 rounded-l-md">RESUME</span>
                 <span className="bg-amber-300 text-black p-0 w-full px-1 pr-1.5 py-1.5 rounded-r-md">CV</span>
               </a>
               {RESUME_DATA.contact.social.map((social) => (
-                <Button key={social.name} className="size-8 shadow-none" variant="outline" size="icon" asChild>
-                  <a href={social.url} target="_blank">
+                <Button key={social.name} className="size-8 shadow-none bg-transparent" variant="outline" size="icon" asChild>
+                  <a href={social.url} target="_blank" rel="noreferrer">
                     <social.icon className="size-4" />
                   </a>
                 </Button>
@@ -71,7 +73,7 @@ export default async function AboutPage({ params }: { params: Props }) {
               {RESUME_DATA.contact.email && (
                 <D.Dialog>
                   <D.DialogTrigger>
-                    <Button className="size-8 shadow-none p-2" variant="outline" size="icon" asChild>
+                    <Button className="size-8 shadow-none p-2 bg-transparent" variant="outline" size="icon" asChild>
                       <MailIcon className="size-4" />
                     </Button>
                   </D.DialogTrigger>
@@ -103,7 +105,7 @@ export default async function AboutPage({ params }: { params: Props }) {
           </div>
 
           <Avatar className="size-28">
-            <AvatarImage alt={RESUME_DATA.name} src={RESUME_DATA.avatarUrl} />
+            <AvatarImage alt={RESUME_DATA.name} src={RESUME_DATA.avatarUrl || '/placeholder.svg'} />
             <AvatarFallback>{RESUME_DATA.initials}</AvatarFallback>
           </Avatar>
         </div>
@@ -146,7 +148,7 @@ export default async function AboutPage({ params }: { params: Props }) {
                 <CardHeader className="mb-3 p-0">
                   <div className="flex flex-col items-start justify-between gap-1 gap-x-2 text-base sm:flex-row sm:items-center">
                     <h3 className="inline-flex items-center justify-center gap-x-1 text-lg font-semibold leading-none">
-                      <a className="hover:underline" href={work.link} target="_blank">
+                      <a className="hover:underline" href={work.link} target="_blank" rel="noreferrer">
                         {work.company}
                       </a>
                     </h3>
@@ -234,7 +236,7 @@ export default async function AboutPage({ params }: { params: Props }) {
               Tech Stack
             </Badge>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 mx-auto">
             <div className="flex m-auto gap-1">
               <img alt="Static Badge" src="https://img.shields.io/badge/Flutter-02569B?style=flat&logo=Flutter&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black" />
@@ -250,13 +252,13 @@ export default async function AboutPage({ params }: { params: Props }) {
               <img alt="Static Badge" src="https://img.shields.io/badge/FastAPI-009688?style=plastic&logo=fastapi&logoColor=ffffff" />
               <img alt="Static Badge" src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" />
             </div>
-            <div className="flex m-auto gap-1">
+            <div className="flex m-auto gap-1 flex-wrap">
               <img alt="Static Badge" src="https://img.shields.io/badge/MYSQL-4479A1?style=flat&logo=mysql&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/mariadb-003545?style=flat&logo=mariadb&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/Redis-FF4438?style=flat&logo=redis&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/Firebase-DD2C00?style=flat&logo=firebase&logoColor=white" />
             </div>
-            <div className="flex m-auto gap-1">
+            <div className="flex m-auto gap-1 flex-wrap">
               <img alt="Static Badge" src="https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white" />
               <img alt="Static Badge" src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white" />
