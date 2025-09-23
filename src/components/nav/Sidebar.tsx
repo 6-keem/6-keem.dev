@@ -87,9 +87,9 @@ export default function Sidebar() {
                 <div
                   className={`
                     rounded-md px-4 py-2.5 transition-colors text-sm
-                    ${currentPath === item.path ? 'bg-secondary text-text-selected' : 'text-text-unselected hover:text-text-selected'}
+                    ${currentPath === item.path || (item.path === '/about' && currentPath.includes('about')) ? 'bg-secondary text-text-selected' : 'text-text-unselected hover:text-text-selected'}
                     ${
-                      currentPath === item.path
+                      currentPath === item.path || (item.path === '/about' && currentPath.includes('about'))
                         ? 'dark:bg-secondary dark:text-text-selected'
                         : 'dark:text-text-unselected dark:hover:text-text-selected'
                     }
