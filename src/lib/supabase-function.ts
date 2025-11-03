@@ -37,6 +37,30 @@ export async function getPosts(filter_category?: string) {
   return mapped;
 }
 
+export async function getPostsLazy(filter_category?: string, limit: number = 12, offset: number = 0) {
+  const { data, error } = await supabase.rpc('get_posts', {
+    filter_category: filter_category ?? null,
+    p_limit: limit,
+    p_offset: offset,
+  });
+  if (error) throw error;
+
+  const mapped: Post[] = (data ?? []).map((item: any) => ({
+    id: item.post.id,
+    title: item.post.title,
+    category: item.post.category,
+    description: item.post.description,
+    date: new Date(item.post.date).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('/', '-'),
+    series_id: item.post.series_id,
+    thumbnail: item.post.thumbnail,
+    content: item.post_detail?.content ?? '',
+    tag: item.post_detail?.tag ?? [],
+    post_id: item.post_detail?.post_id ?? item.post.id,
+  }));
+
+  return mapped;
+}
+
 export async function getPostDetail(filter_category: string, filter_date: string) {
   const { data, error } = await supabase.rpc('get_post_detail', {
     filter_category,
