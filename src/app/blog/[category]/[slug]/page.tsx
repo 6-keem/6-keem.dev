@@ -20,9 +20,9 @@ const PostDetail = async ({ params }: { params: Props }) => {
   })!;
   const toc = parseToc(currentPost.content);
   return (
-    <div className="prose mx-auto w-full max-w-screen-xl px-5 dark:prose-invert sm:px-6">
+    <div className="prose mx-auto w-full px-5 dark:prose-invert sm:px-6 max-w-[750px]">
       <TocRegistrar toc={toc} />
-      <div className=" mx-auto w-full max-w-[1080px]">
+      <div className=" mx-auto w-full">
         <PostHeader post={currentPost} />
         <article className="relative">
           <PostBody currentPost={currentPost} posts={post} />
