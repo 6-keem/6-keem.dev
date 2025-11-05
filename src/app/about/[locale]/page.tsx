@@ -15,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Badge } from '@/components/ui/badge';
 import { ProjectBody } from '@/components/project-detail/project-body';
 import ReactMarkdown from 'react-markdown';
+// import { getVariables } from '@/lib/supabase-function';
 
 type Props = Promise<{ locale: Locale }>;
 
@@ -39,6 +40,8 @@ export default async function AboutPage({ params }: { params: Props }) {
   const projectList = await getSortedProjectList(locale);
   const careerProjectList = await getCareerProjectList(locale);
 
+  // const resume_url = await getVariables('resume_url');
+
   return (
     <main className="container relative mx-auto scroll-my-12 overflow-auto p-6 sm:p-9 md:p-16 print:p-12 print:pt-0">
       <LanguageSelector className="m-auto mb-5 border-0 sm:hidden print:hidden" />
@@ -50,7 +53,7 @@ export default async function AboutPage({ params }: { params: Props }) {
             <p className="max-w-md items-center text-pretty text-sm text-muted-foreground">
               <a
                 className="inline-flex text-sm lg:text-md items-center gap-x-1.5 align-baseline leading-none hover:underline"
-                href={RESUME_DATA.locationLink}
+                href={RESUME_DATA.location}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -59,7 +62,12 @@ export default async function AboutPage({ params }: { params: Props }) {
               </a>
             </p>
             <div className="flex justify-center items-center gap-1.5 pt-1 m-0 text-sm text-muted-foreground sm:justify-start print:hidden">
-              <a href="/" target="_blank" className="font-semibold" rel="noreferrer">
+              <a
+                href={'https://drive.google.com/file/d/1jj2lbk7f-N4KQj06QOsC_z56jptDXyom/view?usp=drive_link'}
+                target="_blank"
+                className="font-semibold cursor-pointer"
+                rel=""
+              >
                 <span className="bg-blue-700 text-white p-0 w-full px-1 pl-1.5 py-1.5 rounded-l-md">RESUME</span>
                 <span className="bg-amber-300 text-black p-0 w-full px-1 pr-1.5 py-1.5 rounded-r-md">CV</span>
               </a>
@@ -238,32 +246,35 @@ export default async function AboutPage({ params }: { params: Props }) {
           </div>
           <div className="flex flex-col gap-1 mx-auto">
             <div className="flex m-auto gap-1">
-              <img alt="Static Badge" src="https://img.shields.io/badge/Flutter-02569B?style=flat&logo=Flutter&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Redux-764ABC?style=flat&logo=redux&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Flutter-02569B?style=plastic&logo=Flutter&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/React-61DAFB?style=plastic&logo=react&logoColor=black" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Next.js-000000?style=plastic&logo=nextdotjs&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Redux-764ABC?style=plastic&logo=redux&logoColor=white" />
             </div>
             <div className="flex m-auto gap-1">
-              <img alt="Static Badge" src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=springboot&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Spring Boot-6DB33F?style=plastic&logo=springboot&logoColor=white" />
               <img
                 alt="Static Badge"
-                src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=springsecurity&logoColor=white"
+                src="https://img.shields.io/badge/Spring Security-6DB33F?style=plastic&logo=springsecurity&logoColor=white"
               />
               <img alt="Static Badge" src="https://img.shields.io/badge/FastAPI-009688?style=plastic&logo=fastapi&logoColor=ffffff" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Docker-2496ED?style=plastic&logo=docker&logoColor=white" />
             </div>
             <div className="flex m-auto gap-1 flex-wrap">
-              <img alt="Static Badge" src="https://img.shields.io/badge/MYSQL-4479A1?style=flat&logo=mysql&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/mariadb-003545?style=flat&logo=mariadb&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Redis-FF4438?style=flat&logo=redis&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Firebase-DD2C00?style=flat&logo=firebase&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/MYSQL-4479A1?style=plastic&logo=mysql&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/MariaDB-003545?style=plastic&logo=mariadb&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Redis-FF4438?style=plastic&logo=redis&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Firebase-DD2C00?style=plastic&logo=firebase&logoColor=white" />
             </div>
             <div className="flex m-auto gap-1 flex-wrap">
-              <img alt="Static Badge" src="https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/Confluence-172B4D?style=flat&logo=confluence&logoColor=white" />
-              <img alt="Static Badge" src="https://img.shields.io/badge/JIRA-0052CC?style=flat&logo=jira&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Git-F05032?style=plastic&logo=git&logoColor=white" />
+              <img
+                alt="Static Badge"
+                src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=plastic&logo=githubactions&logoColor=white"
+              />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Jenkins-D24939?style=plastic&logo=Jenkins&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/Confluence-172B4D?style=plastic&logo=confluence&logoColor=white" />
+              <img alt="Static Badge" src="https://img.shields.io/badge/JIRA-0052CC?style=plastic&logo=jira&logoColor=white" />
             </div>
           </div>
         </Section>
