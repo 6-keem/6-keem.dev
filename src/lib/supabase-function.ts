@@ -101,3 +101,16 @@ export async function getSeriesInfo(series_id: number) {
   };
   return series_info;
 }
+
+export async function getVariables(p_key: string): Promise<string | undefined> {
+  const { data, error } = await supabase.rpc('get_variables', {
+    p_key,
+  });
+  if (error) console.error(error);
+
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
+
+  return undefined;
+}
