@@ -1,9 +1,7 @@
 import React from 'react';
 import CategoryList from './CategoryList';
 import PostCard from './PostCard';
-import { auth } from '@/lib/auth';
 import { Post } from '@/config/types';
-import { Session } from 'next-auth';
 import { getCategoryList, getPosts } from '@/lib/supabase-function';
 
 interface PostListProps {
