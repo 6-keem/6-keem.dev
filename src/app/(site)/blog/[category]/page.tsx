@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import PostListPage from '@/components/post_list/PostListPage';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { getCategoryList } from '@/lib/supabase-function';
+import { checkPermission } from '@/lib/auth';
+import DockSection from '@/components/dock/DockSection';
 
 type Props = Promise<{ category: string }>;
 
@@ -39,7 +41,17 @@ export async function generateMetadata({ params }: { params: Props }): Promise<M
 const CategoryPage = async ({ params }: { params: Props }) => {
   const { category } = await params;
   const decodedCategory = decodeURIComponent(category);
-  return <PostListPage category={decodedCategory} />;
+  const isAdmin = await checkPermission();
+  return (
+    <div>
+      <PostListPage category={decodedCategory} />
+      {isAdmin && (
+        <section className="fixed left-1/2 bottom-8 -translate-x-1/2 w-max">
+          <DockSection />
+        </section>
+      )}
+    </div>
+  );
 };
 
 export default CategoryPage;

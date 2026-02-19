@@ -1,7 +1,9 @@
+import DockSection from '@/components/dock/DockSection';
 import { PostBody } from '@/components/post_detail/PostBody';
 import { PostFooter } from '@/components/post_detail/PostFooter';
 import { PostHeader } from '@/components/post_detail/PostHeader';
 import { TocRegistrar } from '@/components/post_list/TocRegister';
+import { checkPermission } from '@/lib/auth';
 import { parseToc } from '@/lib/post';
 import { getPosts } from '@/lib/supabase-function';
 
@@ -19,6 +21,8 @@ const PostDetail = async ({ params }: { params: Props }) => {
     return post.date === slug;
   })!;
   const toc = parseToc(currentPost.content);
+
+  const isAdmin = await checkPermission();
   return (
     <div className="prose mx-auto w-full px-5 dark:prose-invert sm:px-6 max-w-[750px]">
       <TocRegistrar toc={toc} />
@@ -29,6 +33,11 @@ const PostDetail = async ({ params }: { params: Props }) => {
         </article>
       </div>
       <PostFooter post={currentPost} posts={post} />
+      {isAdmin && (
+        <section className="fixed left-1/2 bottom-8 -translate-x-1/2 w-max">
+          <DockSection postId={currentPost.id} />
+        </section>
+      )}
     </div>
   );
 };
