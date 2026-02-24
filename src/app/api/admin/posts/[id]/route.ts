@@ -10,12 +10,12 @@ function badRequest(message: string) {
   return NextResponse.json({ message }, { status: 400 });
 }
 
-export async function GET(_req: Request, ctx: { params: { id: string } }) {
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail || session?.user?.email !== adminEmail) return unauthorized();
 
-  const { id: idRaw } = await ctx.params;
+  const { id: idRaw } = await context.params;
   const id = Number(idRaw);
   if (!Number.isFinite(id)) return badRequest('Invalid id');
 
@@ -83,12 +83,12 @@ export async function GET(_req: Request, ctx: { params: { id: string } }) {
   );
 }
 
-export async function PATCH(req: Request, ctx: { params: { id: string } }) {
+export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail || session?.user?.email !== adminEmail) return unauthorized();
 
-  const { id: idRaw } = await ctx.params;
+  const { id: idRaw } = await context.params;
   const id = Number(idRaw);
   if (!Number.isFinite(id)) return badRequest('Invalid id');
 
