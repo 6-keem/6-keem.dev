@@ -15,6 +15,10 @@ export function quotationSnippet(body = '인용문을 적어주세요.') {
   return [`<Quotation>`, body.trim(), `</Quotation>`, ``].join('\n');
 }
 
+export function youtubeSnippet(id = 'VIDEO_ID') {
+  return [`<YouTube id="${escapeAttr(id)}"></YouTube>`, ``].join('\n');
+}
+
 export function highlightWrap(color: HighlightColor) {
   return {
     before: `<Highlight color="${color}">`,

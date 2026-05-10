@@ -10,6 +10,7 @@ import { PostMeta } from './types';
 import { Callout } from '@/components/mdx/Callout';
 import { Highlight } from '@/components/mdx/Highlight';
 import { Quotation } from '@/components/mdx/Quotation';
+import { YouTube } from '@/components/mdx/YouTube';
 import { escapeHtmlExceptCustom } from './toolbar/escapeHtmlExceptCustom';
 
 type Props = {
@@ -20,14 +21,46 @@ type Props = {
 
 const schema = {
   ...defaultSchema,
-  tagNames: [...(defaultSchema.tagNames ?? []), 'callout', 'highlight', 'quotation'],
+  tagNames: [...(defaultSchema.tagNames ?? []), 'callout', 'highlight', 'quotation', 'youtube'],
   attributes: {
     ...(defaultSchema.attributes ?? {}),
     callout: ['type', 'title', 'className'],
     highlight: ['color', 'className'],
     quotation: ['className'],
+    youtube: ['id', 'title', 'start', 'className'],
     img: ['src', 'alt', 'title', 'loading', 'className'],
     a: ['href', 'target', 'rel', 'title', 'className'],
+  },
+};
+
+const remarkPlugins = [remarkGfm];
+const rehypePlugins: any[] = [rehypeRaw, [rehypeSanitize, schema]];
+
+const markdownComponents = {
+  p: ({ children }: any) => <div className="my-4 leading-7">{children}</div>,
+
+  img: (props: any) => (
+    <img
+      {...props}
+      alt={props.alt ?? ''}
+      loading="lazy"
+      className="my-6 w-full rounded-2xl border border-border object-contain"
+    />
+  ),
+
+  callout: (props: any) => (
+    <Callout type={props.type} title={props.title}>
+      {props.children}
+    </Callout>
+  ),
+
+  highlight: (props: any) => <Highlight color={props.color}>{props.children}</Highlight>,
+
+  quotation: (props: any) => <Quotation className={props.className}>{props.children}</Quotation>,
+
+  youtube: (props: any) => {
+    const rawId = typeof props.id === 'string' ? props.id.replace(/^user-content-/, '') : props.id;
+    return <YouTube id={rawId} title={props.title} start={props.start ? Number(props.start) : undefined} className={props.className} />;
   },
 };
 
@@ -63,7 +96,7 @@ function isBlockish(node: React.ReactNode) {
 
 export default function PreviewPane({ meta, content, thumbnailPreview }: Props) {
   const previewTitle = meta.title || '제목을 입력하세요';
-  const safeContent = useMemo(() => escapeHtmlExceptCustom(content, ['callout', 'highlight', 'quotation']), [content]);
+  const safeContent = useMemo(() => escapeHtmlExceptCustom(content, ['callout', 'highlight', 'quotation', 'youtube']), [content]);
 
   return (
     <section className="h-full min-h-0 overflow-auto bg-background">
@@ -98,30 +131,9 @@ export default function PreviewPane({ meta, content, thumbnailPreview }: Props) 
 
         <article className="prose prose-neutral dark:prose-invert max-w-none">
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, [rehypeSanitize, schema]]}
-            components={{
-              p: ({ children }) => <div className="my-4 leading-7">{children}</div>,
-
-              img: (props) => (
-                <img
-                  {...props}
-                  alt={props.alt ?? ''}
-                  loading="lazy"
-                  className="my-6 w-full rounded-2xl border border-border object-contain"
-                />
-              ),
-
-              callout: (props: any) => (
-                <Callout type={props.type} title={props.title}>
-                  {props.children}
-                </Callout>
-              ),
-
-              highlight: (props: any) => <Highlight color={props.color}>{props.children}</Highlight>,
-
-              quotation: (props: any) => <Quotation className={props.className}>{props.children}</Quotation>,
-            }}
+            remarkPlugins={remarkPlugins}
+            rehypePlugins={rehypePlugins}
+            components={markdownComponents}
           >
             {safeContent}
           </ReactMarkdown>
