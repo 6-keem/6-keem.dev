@@ -32,7 +32,7 @@ function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
           <img
             src={post.thumbnail}
             alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.06]"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.12]"
           />
         )}
       </div>
