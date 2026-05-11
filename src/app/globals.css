@@ -52,6 +52,14 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --background-transparent: rgba(255, 255, 255, 0.6);
+
+    /* Brand (Toss blue) */
+    --brand: #3182f6;
+    --brand-foreground: #ffffff;
+    --brand-soft: #e8f3ff;
+
+    /* Title hover */
+    --title-hover: #3182f6;
   }
 
   .dark {
@@ -90,6 +98,14 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --background-transparent: rgba(0, 0, 0, 0.6);
+
+    /* Brand (Toss blue) */
+    --brand: #4a90ff;
+    --brand-foreground: #ffffff;
+    --brand-soft: #1a2b44;
+
+    /* Title hover */
+    --title-hover: #4a90ff;
   }
 
   * {

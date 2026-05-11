@@ -74,6 +74,12 @@ const config = {
           unselected: 'var(--text-unselected)',
           hovered: 'var(--text-hovered)',
         },
+        brand: {
+          DEFAULT: 'var(--brand)',
+          foreground: 'var(--brand-foreground)',
+          soft: 'var(--brand-soft)',
+        },
+        'title-hover': 'var(--title-hover)',
       },
       typography: {
         DEFAULT: {

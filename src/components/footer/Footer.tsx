@@ -8,7 +8,7 @@ export const Footer = () => {
 
   return (
     <footer
-      className="py-8 z-20 bottom-0 w-full flex items-center justify-center shadow-sm print:hidden"
+      className="py-10 z-20 bottom-0 w-full flex items-center justify-center bg-muted text-muted-foreground text-sm print:hidden"
       style={{ marginBottom: `${footerTopMargin}px` }}
     >
       <span>© Powered by&nbsp;</span>
