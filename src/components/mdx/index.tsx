@@ -18,4 +18,5 @@ export const MDXComponent: MDXComponents = {
   pre: (props: any) => <CodeBlock {...props} />,
   Quotation,
   YouTube,
+  Youtube: YouTube,
 };
