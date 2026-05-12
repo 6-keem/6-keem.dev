@@ -69,6 +69,35 @@ export async function getPostsLazy(filter_category?: string, limit: number = 12,
   return mapped;
 }
 
+function mapPostRow(item: any): Post {
+  return {
+    id: item.post.id,
+    title: item.post.title,
+    category: item.post.category,
+    description: item.post.description,
+    date: new Date(item.post.date)
+      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      .replaceAll('/', '-'),
+    series_id: item.post.series_id,
+    thumbnail: item.post.thumbnail,
+    content: item.post_detail?.content ?? '',
+    tag: item.post_detail?.tag ?? [],
+    post_id: item.post_detail?.post_id ?? item.post.id,
+  };
+}
+
+export async function getHeroPosts(): Promise<Post[]> {
+  const { data, error } = await supabase.rpc('get_hero_posts');
+  if (error) throw error;
+  return (data ?? []).map(mapPostRow);
+}
+
+export async function getRandomPosts(p_limit: number = 5): Promise<Post[]> {
+  const { data, error } = await supabase.rpc('get_random_posts', { p_limit });
+  if (error) throw error;
+  return (data ?? []).map(mapPostRow);
+}
+
 export async function getPostDetail(filter_category: string, filter_date: string) {
   const { data, error } = await supabase.rpc('get_post_detail', {
     filter_category,

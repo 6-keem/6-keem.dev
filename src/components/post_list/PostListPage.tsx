@@ -1,5 +1,10 @@
-import { Post } from '@/config/types';
-import { getPosts, getPostsCount, getPostsLazy, getSeriesSummary } from '@/lib/supabase-function';
+import {
+  getHeroPosts,
+  getPostsCount,
+  getPostsLazy,
+  getRandomPosts,
+  getSeriesSummary,
+} from '@/lib/supabase-function';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
 import SeriesSection, { SeriesCardData } from './blog/SeriesSection';
@@ -34,16 +39,14 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const safePage = Math.max(1, page);
   const offset = (safePage - 1) * PAGE_SIZE;
 
-  const [pagePosts, totalCount] = await Promise.all([
+  const [pagePosts, totalCount, heroPosts, randomPicks, series] = await Promise.all([
     getPostsLazy(category, PAGE_SIZE, offset),
     getPostsCount(category),
+    isRoot ? getHeroPosts() : Promise.resolve([]),
+    isRoot ? getRandomPosts(5) : Promise.resolve([]),
+    isRoot ? loadSeriesCards() : Promise.resolve([]),
   ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-
-  // Hero + sidebar still need broader data until they get dedicated RPCs.
-  const allPosts: Post[] = isRoot ? await getPosts() : [];
-  const heroPosts = isRoot ? allPosts.slice(0, 3) : [];
-  const series = isRoot ? await loadSeriesCards() : [];
   const basePath = category ? `/blog/${category}` : '/blog';
 
   return (
@@ -63,7 +66,7 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
               />
             </main>
             <aside className="lg:sticky lg:top-24">
-              <RandomPicks posts={allPosts} count={5} />
+              <RandomPicks posts={randomPicks} />
             </aside>
           </div>
         ) : (
