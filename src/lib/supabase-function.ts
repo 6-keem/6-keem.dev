@@ -37,8 +37,16 @@ export async function getPosts(filter_category?: string) {
   return mapped;
 }
 
+export async function getPostsCount(filter_category?: string): Promise<number> {
+  const { data, error } = await supabase.rpc('get_posts_count', {
+    filter_category: filter_category ?? null,
+  });
+  if (error) throw error;
+  return typeof data === 'number' ? data : Number(data ?? 0);
+}
+
 export async function getPostsLazy(filter_category?: string, limit: number = 12, offset: number = 0) {
-  const { data, error } = await supabase.rpc('get_posts', {
+  const { data, error } = await supabase.rpc('get_posts_lazy', {
     filter_category: filter_category ?? null,
     p_limit: limit,
     p_offset: offset,

@@ -1,34 +1,22 @@
-'use client';
-
-import { useMemo, useRef, useState } from 'react';
 import type { Post } from '@/config/types';
 import ArticleList from './ArticleList';
 import Pagination from './Pagination';
-import { useRouter } from 'next/router';
 
-const PAGE_SIZE = 5;
+interface Props {
+  posts: Post[];
+  category?: string;
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
 
-export default function PaginatedArticleList({ posts }: { posts: Post[] }) {
-  const [page, setPage] = useState(1);
-  const topRef = useRef<HTMLDivElement>(null);
-  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
-  const pageItems = useMemo(() => posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [posts, page]);
-
-  // const router = useRouter();
-  // const url = router.pathname;
-  // console.log(url);
+export default function PaginatedArticleList({ posts, category, currentPage, totalPages, basePath }: Props) {
+  const title = category ?? '전체 아티클';
 
   return (
-    <div ref={topRef} className="scroll-mt-20">
-      <ArticleList posts={pageItems} />
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onChange={(p) => {
-          setPage(p);
-          topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }}
-      />
+    <div className="scroll-mt-20">
+      <ArticleList posts={posts} title={title} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} />
     </div>
   );
 }

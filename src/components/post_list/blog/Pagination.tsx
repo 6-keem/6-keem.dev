@@ -1,32 +1,45 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import ChevronIcon from './ChevronIcon';
+import { smoothScrollTo } from '@/lib/smooth-scroll';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onChange: (page: number) => void;
+  basePath: string;
 }
 
-export default function Pagination({ currentPage, totalPages, onChange }: PaginationProps) {
+function pageHref(basePath: string, page: number) {
+  return page === 1 ? basePath : `${basePath}?page=${page}`;
+}
+
+export default function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {
+  const router = useRouter();
+
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   const canPrev = currentPage > 1;
   const canNext = currentPage < totalPages;
 
-  const baseBtn =
-    'w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium transition-colors';
+  const baseBtn = 'w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium transition-colors';
+
+  const navigate = (page: number) => {
+    if (page === currentPage) return;
+    router.push(pageHref(basePath, page), { scroll: false });
+    // Smooth scroll to top of viewport on the current view; new content
+    // renders within the same scroll position.
+    smoothScrollTo(0, 0);
+  };
 
   return (
     <div className="flex items-center justify-center gap-1 pt-10">
       <button
         type="button"
         disabled={!canPrev}
-        onClick={() => canPrev && onChange(currentPage - 1)}
-        className={`${baseBtn} ${
-          canPrev ? 'text-muted-foreground hover:bg-secondary' : 'text-muted-foreground/40 cursor-default'
-        }`}
+        onClick={() => canPrev && navigate(currentPage - 1)}
+        className={`${baseBtn} ${canPrev ? 'text-muted-foreground hover:bg-secondary' : 'text-muted-foreground/40 cursor-default'}`}
         aria-label="이전 페이지"
       >
         <ChevronIcon direction="left" size={14} />
@@ -35,11 +48,9 @@ export default function Pagination({ currentPage, totalPages, onChange }: Pagina
         <button
           key={p}
           type="button"
-          onClick={() => onChange(p)}
+          onClick={() => navigate(p)}
           className={`${baseBtn} ${
-            p === currentPage
-              ? 'bg-secondary text-foreground font-bold'
-              : 'text-muted-foreground hover:bg-secondary'
+            p === currentPage ? 'bg-secondary text-foreground font-bold' : 'text-muted-foreground hover:bg-secondary'
           }`}
         >
           {p}
@@ -48,10 +59,8 @@ export default function Pagination({ currentPage, totalPages, onChange }: Pagina
       <button
         type="button"
         disabled={!canNext}
-        onClick={() => canNext && onChange(currentPage + 1)}
-        className={`${baseBtn} ${
-          canNext ? 'text-muted-foreground hover:bg-secondary' : 'text-muted-foreground/40 cursor-default'
-        }`}
+        onClick={() => canNext && navigate(currentPage + 1)}
+        className={`${baseBtn} ${canNext ? 'text-muted-foreground hover:bg-secondary' : 'text-muted-foreground/40 cursor-default'}`}
         aria-label="다음 페이지"
       >
         <ChevronIcon direction="right" size={14} />
