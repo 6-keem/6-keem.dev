@@ -1,55 +1,53 @@
-import { Post } from '@/config/types';
-import { getPosts, getSeriesInfo } from '@/lib/supabase-function';
+import {
+  getHeroPosts,
+  getPostsCount,
+  getPostsLazy,
+  getRandomPosts,
+  getSeriesSummary,
+} from '@/lib/supabase-function';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
 import SeriesSection, { SeriesCardData } from './blog/SeriesSection';
 import RandomPicks from './blog/RandomPicks';
 
+const PAGE_SIZE = 5;
+
 interface PostListProps {
   category?: string;
+  page?: number;
 }
 
-async function buildSeries(posts: Post[]): Promise<SeriesCardData[]> {
-  const groups = new Map<number, Post[]>();
-  for (const p of posts) {
-    if (!p.series_id) continue;
-    const arr = groups.get(p.series_id) ?? [];
-    arr.push(p);
-    groups.set(p.series_id, arr);
-  }
-
-  const entries = await Promise.all(
-    Array.from(groups.entries()).map(async ([id, items]) => {
-      const sorted = [...items].sort((a, b) => a.date.toString().localeCompare(b.date.toString()));
-      const head = sorted[0];
-      let name = `Series #${id}`;
-      try {
-        const info = await getSeriesInfo(id);
-        if (info?.series_name) name = info.series_name;
-      } catch {}
-      return {
-        id,
-        name,
-        description: head.description,
-        count: items.length,
-        thumbnail: head.thumbnail,
-        href: `/blog/${head.category}/${head.date.toString()}`,
-      } satisfies SeriesCardData;
-    }),
-  );
-
-  return entries.sort((a, b) => b.count - a.count);
+async function loadSeriesCards(): Promise<SeriesCardData[]> {
+  const summary = await getSeriesSummary();
+  return summary.map((s) => {
+    const date = new Date(s.first_post_date)
+      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      .replaceAll('/', '-');
+    return {
+      id: s.id,
+      name: s.series_name,
+      description: s.description ?? s.first_post_description,
+      count: s.post_count,
+      thumbnail: s.thumbnail_url ?? s.first_post_thumbnail,
+      href: `/blog/${s.first_post_category}/${date}`,
+    } satisfies SeriesCardData;
+  });
 }
 
-const PostListPage = async ({ category }: PostListProps) => {
-  const postList: Post[] = await getPosts(category);
-
+const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const isRoot = !category;
-  const sortedByDate = [...postList].sort((a, b) =>
-    b.date.toString().localeCompare(a.date.toString()),
-  );
-  const heroPosts = isRoot ? sortedByDate.slice(0, 3) : [];
-  const series = isRoot ? await buildSeries(postList) : [];
+  const safePage = Math.max(1, page);
+  const offset = (safePage - 1) * PAGE_SIZE;
+
+  const [pagePosts, totalCount, heroPosts, randomPicks, series] = await Promise.all([
+    getPostsLazy(category, PAGE_SIZE, offset),
+    getPostsCount(category),
+    isRoot ? getHeroPosts() : Promise.resolve([]),
+    isRoot ? getRandomPosts(5) : Promise.resolve([]),
+    isRoot ? loadSeriesCards() : Promise.resolve([]),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const basePath = category ? `/blog/${category}` : '/blog';
 
   return (
     <>
@@ -59,15 +57,27 @@ const PostListPage = async ({ category }: PostListProps) => {
         {isRoot ? (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_308px] gap-10 lg:gap-16 items-start">
             <main className="min-w-0">
-              <PaginatedArticleList posts={sortedByDate} />
+              <PaginatedArticleList
+                posts={pagePosts}
+                category={category}
+                currentPage={safePage}
+                totalPages={totalPages}
+                basePath={basePath}
+              />
             </main>
             <aside className="lg:sticky lg:top-24">
-              <RandomPicks posts={sortedByDate} count={5} />
+              <RandomPicks posts={randomPicks} />
             </aside>
           </div>
         ) : (
           <main>
-            <PaginatedArticleList posts={sortedByDate} />
+            <PaginatedArticleList
+              posts={pagePosts}
+              category={category}
+              currentPage={safePage}
+              totalPages={totalPages}
+              basePath={basePath}
+            />
           </main>
         )}
       </section>

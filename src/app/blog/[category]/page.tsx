@@ -36,10 +36,14 @@ export async function generateMetadata({ params }: { params: Props }): Promise<M
   };
 }
 
-const CategoryPage = async ({ params }: { params: Props }) => {
+type SearchParams = Promise<{ page?: string }>;
+
+const CategoryPage = async ({ params, searchParams }: { params: Props; searchParams: SearchParams }) => {
   const { category } = await params;
+  const sp = await searchParams;
+  const page = sp.page ? Number(sp.page) : 1;
   const decodedCategory = decodeURIComponent(category);
-  return <PostListPage category={decodedCategory} />;
+  return <PostListPage category={decodedCategory} page={Number.isFinite(page) ? page : 1} />;
 };
 
 export default CategoryPage;

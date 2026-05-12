@@ -25,7 +25,7 @@ const PostDetail = async ({ params }: { params: Props }) => {
       <div className=" mx-auto w-full">
         <PostHeader post={currentPost} />
         <article className="relative">
-          <PostBody currentPost={currentPost} posts={post} />
+          <PostBody currentPost={currentPost} />
         </article>
       </div>
       <PostFooter post={currentPost} posts={post} />
