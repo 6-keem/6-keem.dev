@@ -13,6 +13,7 @@ import { SidebarProvider } from '@/components/provider/SidebarProvider';
 import Main from '@/components/layout/Main';
 import { TocProvider } from '@/components/provider/TocProvider';
 import Sidebar from '@/components/nav/Sidebar';
+import ScrollTopOnNavFlag from '@/components/common/ScrollTopOnNavFlag';
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = blogName;
@@ -21,6 +22,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title,
+    icons: {
+      icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    },
     openGraph: {
       title,
       url,
@@ -46,6 +50,7 @@ export default function RootLayout({
             <ScrollProvider>
               <SessionProvider>
                 <SidebarProvider>
+                  <ScrollTopOnNavFlag />
                   <Header />
                   <Suspense fallback={<Loading />}>
                     <Sidebar />
