@@ -5,8 +5,11 @@ import { ChevronDown } from 'lucide-react';
 import TagInput from './TagInput';
 import ThumbnailDropzone from './ThumbnailDropzone';
 import StickyActionBar from './StickyActionBar';
+import SeriesPicker from './SeriesPicker';
+import CategoryPicker from './CategoryPicker';
 import { PostMeta } from './types';
 import EditorToolbar from './toolbar/EditorToolbar';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -143,21 +146,28 @@ export default function EditorPane({
 
               <div className="mt-6">
                 <div className={label}>카테고리</div>
-                <input
-                  value={meta.category}
-                  onChange={(e) => setMeta((m) => ({ ...m, category: e.target.value }))}
-                  placeholder="카테고리 (예: Frontend, Backend, AI)"
-                  className={fieldBase}
+                <CategoryPicker
+                  category={meta.category}
+                  onChange={(name) => setMeta((m) => ({ ...m, category: name }))}
                 />
               </div>
 
               <div className="mt-6">
                 <div className={label}>시리즈</div>
-                <input
-                  value={meta.seriesName}
-                  onChange={(e) => setMeta((m) => ({ ...m, seriesName: e.target.value }))}
-                  placeholder="시리즈 이름 (선택)"
-                  className={fieldBase}
+                <SeriesPicker
+                  seriesId={meta.seriesId}
+                  onChange={(id, name) => setMeta((m) => ({ ...m, seriesId: id, seriesName: name }))}
+                />
+              </div>
+
+              <div className="mt-6 flex items-center justify-between rounded-xl border border-border bg-background/70 px-4 py-3">
+                <div>
+                  <div className="text-sm font-semibold text-foreground">홈 Hero에 노출</div>
+                  <div className="text-xs text-muted-foreground mt-1">메인 페이지 상단 슬라이더에 이 글을 포함합니다.</div>
+                </div>
+                <Switch
+                  checked={meta.isHero}
+                  onCheckedChange={(v) => setMeta((m) => ({ ...m, isHero: v }))}
                 />
               </div>
 

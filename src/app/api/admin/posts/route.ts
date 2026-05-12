@@ -25,24 +25,17 @@ export async function POST(req: Request) {
       title: string;
       desc: string;
       tags: string[];
-      seriesName?: string;
+      seriesId?: number | null;
       thumbnailUrl?: string;
       category?: string;
+      isHero?: boolean;
     };
 
     if (!meta.title?.trim()) {
       return NextResponse.json({ message: 'title is required' }, { status: 400 });
     }
 
-    let seriesId: number | null = null;
-    const seriesName = meta.seriesName?.trim();
-    if (seriesName) {
-      const { data: series, error: seriesErr } = await supabase.rpc('get_or_create_series', {
-        series_name: seriesName,
-      });
-      if (seriesErr) throw seriesErr;
-      seriesId = series?.id ?? null;
-    }
+    const seriesId = meta.seriesId ?? null;
 
     const { data, error } = await supabase.rpc('create_post', {
       title: meta.title,
@@ -57,6 +50,14 @@ export async function POST(req: Request) {
     });
 
     if (error) throw error;
+
+    const newPostId = (data as any)?.id ?? (data as any)?.post_id ?? null;
+    if (newPostId && meta.isHero) {
+      const { error: heroErr } = await supabase
+        .from('hero_post')
+        .upsert({ post_id: newPostId }, { onConflict: 'post_id' });
+      if (heroErr) console.error('hero_post insert failed', heroErr);
+    }
 
     return NextResponse.json({ ok: true, data }, { status: 200 });
   } catch (e: any) {

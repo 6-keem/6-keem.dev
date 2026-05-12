@@ -56,13 +56,17 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
 
   const detail = Array.isArray(data.post_detail) ? data.post_detail[0] : data.post_detail;
 
+  const { data: heroRow } = await sb.from('hero_post').select('id').eq('post_id', id).maybeSingle();
+
   const meta = {
     title: data.title ?? '',
     desc: data.description ?? '',
     category: data.category ?? '',
     tags: detail?.tag ?? [],
+    seriesId: data.series_id ?? null,
     seriesName: (data.series as any)?.series_name ?? '',
     thumbnailUrl: data.thumbnail ?? '',
+    isHero: !!heroRow,
   };
 
   const content = detail?.content ?? '';
@@ -105,21 +109,13 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       desc: string;
       category: string;
       tags: string[];
-      seriesName?: string;
+      seriesId?: number | null;
       thumbnailUrl?: string;
+      isHero?: boolean;
     };
 
     const sb = supabaseAdmin();
-
-    let seriesId: number | null = null;
-    const seriesName = meta.seriesName?.trim();
-    if (seriesName) {
-      const { data: series, error: seriesErr } = await sb.rpc('get_or_create_series', {
-        series_name: seriesName,
-      });
-      if (seriesErr) throw seriesErr;
-      seriesId = series?.id ?? null;
-    }
+    const seriesId = meta.seriesId ?? null;
 
     const { error: postErr } = await sb
       .from('post')
@@ -147,6 +143,16 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     );
 
     if (detailErr) throw detailErr;
+
+    if (meta.isHero) {
+      const { error: heroErr } = await sb
+        .from('hero_post')
+        .upsert({ post_id: id }, { onConflict: 'post_id' });
+      if (heroErr) throw heroErr;
+    } else {
+      const { error: heroErr } = await sb.from('hero_post').delete().eq('post_id', id);
+      if (heroErr) throw heroErr;
+    }
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (e: any) {
