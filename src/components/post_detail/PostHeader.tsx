@@ -17,11 +17,11 @@ export const PostHeader = ({ post }: Props) => {
         <button
           type="button"
           onClick={() => navigate(`/blog/${post.category}`)}
-          className="inline-block text-[13px] font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
+          className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
         >
           {post.category}
         </button>
-        <span className="text-[13px] font-medium text-muted-foreground bg-secondary rounded-md px-2.5 py-1">{post.date.toString()}</span>
+        <span className="text-sm font-medium text-muted-foreground bg-secondary rounded-md px-2.5 py-1">{post.date.toString()}</span>
       </div>
       <p className="text-foreground font-medium mb-5 text-5xl">{post.title}</p>
       <div className="text-lg font-light text-foreground">{post.description}</div>
