@@ -144,20 +144,22 @@ export default function EditorPane({
                 />
               </div>
 
-              <div className="mt-6">
-                <div className={label}>카테고리</div>
-                <CategoryPicker
-                  category={meta.category}
-                  onChange={(name) => setMeta((m) => ({ ...m, category: name }))}
-                />
-              </div>
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <div className={label}>카테고리</div>
+                  <CategoryPicker
+                    category={meta.category}
+                    onChange={(name) => setMeta((m) => ({ ...m, category: name }))}
+                  />
+                </div>
 
-              <div className="mt-6">
-                <div className={label}>시리즈</div>
-                <SeriesPicker
-                  seriesId={meta.seriesId}
-                  onChange={(id, name) => setMeta((m) => ({ ...m, seriesId: id, seriesName: name }))}
-                />
+                <div>
+                  <div className={label}>시리즈</div>
+                  <SeriesPicker
+                    seriesId={meta.seriesId}
+                    onChange={(id, name) => setMeta((m) => ({ ...m, seriesId: id, seriesName: name }))}
+                  />
+                </div>
               </div>
 
               <div className="mt-6 flex items-center justify-between rounded-xl border border-border bg-background/70 px-4 py-3">
