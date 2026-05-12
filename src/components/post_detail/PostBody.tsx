@@ -8,21 +8,21 @@ import remarkGfm from 'remark-gfm';
 import { MDXComponent } from '../mdx';
 import plasticTheme from '@/../plastic-theme.json';
 import Series from '../mdx/Series';
-import { getSeriesInfo } from '@/lib/supabase-function';
+import { getSeriesInfo, getSeriesPosts } from '@/lib/supabase-function';
 
 interface Props {
   currentPost: Post;
-  posts: Post[];
 }
 
-export const PostBody = async ({ currentPost, posts }: Props) => {
+export const PostBody = async ({ currentPost }: Props) => {
   let seriesPost: Post[] = [];
-  try {
-    seriesPost = posts.filter((p) => p.series_id === currentPost.series_id);
-  } catch {}
-
   let seriesInfo: SeriesInfo | null = null;
-  if (currentPost.series_id) seriesInfo = await getSeriesInfo(currentPost.series_id);
+  if (currentPost.series_id) {
+    [seriesPost, seriesInfo] = await Promise.all([
+      getSeriesPosts(currentPost.series_id),
+      getSeriesInfo(currentPost.series_id),
+    ]);
+  }
 
   return (
     <div className="w-full max-w-[750px] mx-auto">

@@ -1,5 +1,5 @@
 import { Post } from '@/config/types';
-import { getPosts, getPostsCount, getPostsLazy, getSeriesInfo } from '@/lib/supabase-function';
+import { getPosts, getPostsCount, getPostsLazy, getSeriesSummary } from '@/lib/supabase-function';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
 import SeriesSection, { SeriesCardData } from './blog/SeriesSection';
@@ -12,36 +12,21 @@ interface PostListProps {
   page?: number;
 }
 
-async function buildSeries(posts: Post[]): Promise<SeriesCardData[]> {
-  const groups = new Map<number, Post[]>();
-  for (const p of posts) {
-    if (!p.series_id) continue;
-    const arr = groups.get(p.series_id) ?? [];
-    arr.push(p);
-    groups.set(p.series_id, arr);
-  }
-
-  const entries = await Promise.all(
-    Array.from(groups.entries()).map(async ([id, items]) => {
-      const sorted = [...items].sort((a, b) => a.date.toString().localeCompare(b.date.toString()));
-      const head = sorted[0];
-      let name = `Series #${id}`;
-      try {
-        const info = await getSeriesInfo(id);
-        if (info?.series_name) name = info.series_name;
-      } catch {}
-      return {
-        id,
-        name,
-        description: head.description,
-        count: items.length,
-        thumbnail: head.thumbnail,
-        href: `/blog/${head.category}/${head.date.toString()}`,
-      } satisfies SeriesCardData;
-    }),
-  );
-
-  return entries.sort((a, b) => b.count - a.count);
+async function loadSeriesCards(): Promise<SeriesCardData[]> {
+  const summary = await getSeriesSummary();
+  return summary.map((s) => {
+    const date = new Date(s.first_post_date)
+      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      .replaceAll('/', '-');
+    return {
+      id: s.id,
+      name: s.series_name,
+      description: s.description ?? s.first_post_description,
+      count: s.post_count,
+      thumbnail: s.thumbnail_url ?? s.first_post_thumbnail,
+      href: `/blog/${s.first_post_category}/${date}`,
+    } satisfies SeriesCardData;
+  });
 }
 
 const PostListPage = async ({ category, page = 1 }: PostListProps) => {
@@ -55,10 +40,10 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-  // Hero + series + sidebar need broader data, but only on root.
+  // Hero + sidebar still need broader data until they get dedicated RPCs.
   const allPosts: Post[] = isRoot ? await getPosts() : [];
   const heroPosts = isRoot ? allPosts.slice(0, 3) : [];
-  const series = isRoot ? await buildSeries(allPosts) : [];
+  const series = isRoot ? await loadSeriesCards() : [];
   const basePath = category ? `/blog/${category}` : '/blog';
 
   return (
