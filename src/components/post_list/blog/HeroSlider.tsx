@@ -35,8 +35,8 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
   return (
     <section className="mx-auto mt-12 w-full max-w-[1130px] px-4 md:px-12">
       <Link href={`/blog/${current.category}/${current.date.toString()}`} className="group/hero block">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center min-h-[260px]">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-stretch min-h-[260px]">
+          <div className="flex flex-col">
             <div key={index} className={`animate-in fade-in duration-1000 ${slideClass}`}>
               <div className="mb-4">
                 <button
@@ -46,7 +46,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                     e.stopPropagation();
                     navigate(`/blog/${current.category}`);
                   }}
-                  className="inline-block text-[13px] font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
+                  className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
                 >
                   {current.category}
                 </button>
@@ -58,7 +58,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed line-clamp-2">{current.description}</p>
               )}
             </div>
-            <div className="flex gap-3 mt-16">
+            <div className="flex gap-3 mt-auto pt-8">
               <button
                 type="button"
                 onClick={(e) => {

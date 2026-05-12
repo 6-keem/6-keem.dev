@@ -21,13 +21,13 @@ function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
               e.stopPropagation();
               navigate(`/blog/${post.category}`);
             }}
-            className="inline-block text-[13px] font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
+            className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
           >
             {post.category}
           </button>
-          <span className="text-[13px] font-medium text-muted-foreground bg-secondary rounded-md px-2.5 py-1">{post.date.toString()}</span>
+          <span className="text-sm font-medium text-muted-foreground bg-secondary rounded-md px-2.5 py-1">{post.date.toString()}</span>
         </div>
-        <h3 className="text-lg md:text-[19px] font-bold text-foreground leading-snug tracking-tight mb-2 line-clamp-2 transition-colors duration-200 group-hover:text-title-hover">
+        <h3 className="text-lg md:text-xl font-bold text-foreground leading-snug tracking-tight mb-2 line-clamp-2 transition-colors duration-200 group-hover:text-title-hover">
           {post.title}
         </h3>
         {post.description && <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{post.description}</p>}
@@ -48,7 +48,7 @@ function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
 export default function ArticleList({ posts, title = '전체 아티클' }: { posts: Post[]; title?: string }) {
   return (
     <section>
-      <h2 className="text-3xl md:text-[34px] font-extrabold text-foreground tracking-tight mb-2">{title}</h2>
+      <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-2">{title}</h2>
       <div className="mt-9">
         {posts.map((post, i) => (
           <ArticleItem key={post.id} post={post} isFirst={i === 0} />
