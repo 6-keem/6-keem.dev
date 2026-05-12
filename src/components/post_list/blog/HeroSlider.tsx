@@ -3,22 +3,22 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import type { Post } from '@/config/types';
+import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 import ChevronIcon from './ChevronIcon';
 
 const AUTO_INTERVAL_MS = 10_000;
 
 export default function HeroSlider({ posts }: { posts: Post[] }) {
+  const navigate = useNavigateAndScrollTop();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
   const go = useCallback(
     (dir: 'next' | 'prev') => {
       setDirection(dir);
-      setIndex((i) =>
-        dir === 'next' ? (i + 1) % posts.length : (i - 1 + posts.length) % posts.length,
-      );
+      setIndex((i) => (dir === 'next' ? (i + 1) % posts.length : (i - 1 + posts.length) % posts.length));
     },
-    [posts.length],
+    [posts.length]
   );
 
   useEffect(() => {
@@ -34,25 +34,28 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
 
   return (
     <section className="mx-auto mt-12 w-full max-w-[1130px] px-4 md:px-12">
-      <Link
-        href={`/blog/${current.category}/${current.date.toString()}`}
-        className="group/hero block"
-      >
+      <Link href={`/blog/${current.category}/${current.date.toString()}`} className="group/hero block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center min-h-[260px]">
           <div>
             <div key={index} className={`animate-in fade-in duration-1000 ${slideClass}`}>
               <div className="mb-4">
-                <span className="text-[13px] font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/blog/${current.category}`);
+                  }}
+                  className="inline-block text-[13px] font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
+                >
                   {current.category}
-                </span>
+                </button>
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight mb-5 line-clamp-2 transition-colors duration-200 group-hover/hero:text-title-hover">
                 {current.title}
               </h1>
               {current.description && (
-                <p className="text-base md:text-lg text-muted-foreground leading-relaxed line-clamp-2">
-                  {current.description}
-                </p>
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed line-clamp-2">{current.description}</p>
               )}
             </div>
             <div className="flex gap-3 mt-16">
