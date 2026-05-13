@@ -1,4 +1,4 @@
-import { Post, SeriesInfo } from '@/config/types';
+import { Post, TrackInfo } from '@/config/types';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
@@ -9,32 +9,29 @@ export async function getCategoryList() {
   return data;
 }
 
-export async function getPosts(filter_category?: string) {
-  const { data, error } = await supabase.rpc('get_posts', {
-    filter_category: filter_category ?? null,
-  });
-  if (error) throw error;
-
-  const mapped: Post[] = (data ?? []).map((item: any) => ({
+function mapPostRow(item: any): Post {
+  return {
     id: item.post.id,
     title: item.post.title,
     category: item.post.category,
     description: item.post.description,
     date: new Date(item.post.date)
-      .toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
+      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
       .replaceAll('/', '-'),
-    series_id: item.post.series_id,
+    trackId: item.post.series_id ?? null,
     thumbnail: item.post.thumbnail,
     content: item.post_detail?.content ?? '',
     tag: item.post_detail?.tag ?? [],
     post_id: item.post_detail?.post_id ?? item.post.id,
-  }));
+  };
+}
 
-  return mapped;
+export async function getPosts(filter_category?: string) {
+  const { data, error } = await supabase.rpc('get_posts', {
+    filter_category: filter_category ?? null,
+  });
+  if (error) throw error;
+  return (data ?? []).map(mapPostRow);
 }
 
 export async function getPostsCount(filter_category?: string): Promise<number> {
@@ -52,38 +49,7 @@ export async function getPostsLazy(filter_category?: string, limit: number = 12,
     p_offset: offset,
   });
   if (error) throw error;
-
-  const mapped: Post[] = (data ?? []).map((item: any) => ({
-    id: item.post.id,
-    title: item.post.title,
-    category: item.post.category,
-    description: item.post.description,
-    date: new Date(item.post.date).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('/', '-'),
-    series_id: item.post.series_id,
-    thumbnail: item.post.thumbnail,
-    content: item.post_detail?.content ?? '',
-    tag: item.post_detail?.tag ?? [],
-    post_id: item.post_detail?.post_id ?? item.post.id,
-  }));
-
-  return mapped;
-}
-
-function mapPostRow(item: any): Post {
-  return {
-    id: item.post.id,
-    title: item.post.title,
-    category: item.post.category,
-    description: item.post.description,
-    date: new Date(item.post.date)
-      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      .replaceAll('/', '-'),
-    series_id: item.post.series_id,
-    thumbnail: item.post.thumbnail,
-    content: item.post_detail?.content ?? '',
-    tag: item.post_detail?.tag ?? [],
-    post_id: item.post_detail?.post_id ?? item.post.id,
-  };
+  return (data ?? []).map(mapPostRow);
 }
 
 export async function getHeroPosts(): Promise<Post[]> {
@@ -104,88 +70,80 @@ export async function getPostDetail(filter_category: string, filter_date: string
     filter_date: filter_date ? filter_date.split('T')[0] : null,
   });
   if (error) throw error;
-  const mapped: Post[] = (data ?? []).map((item: any) => ({
-    id: item.post.id,
-    title: item.post.title,
-    category: item.post.category,
-    description: item.post.description,
-    date: new Date(item.post.date)
-      .toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-      .replaceAll('/', '-'),
-    series_id: item.post.series_id,
-    thumbnail: item.post.thumbnail,
-    content: item.post_detail?.content ?? '',
-    tag: item.post_detail?.tag ?? [],
-    post_id: item.post_detail?.post_id ?? item.post.id,
-  }));
-
-  return mapped;
+  return (data ?? []).map(mapPostRow);
 }
 
-export interface SeriesSummary {
+export interface TrackSummary {
   id: number;
-  series_name: string;
+  trackName: string;
   description: string | null;
-  thumbnail_url: string | null;
-  post_count: number;
-  first_post_category: string;
-  first_post_date: string;
-  first_post_thumbnail: string;
-  first_post_description: string;
+  thumbnailUrl: string | null;
+  postCount: number;
+  firstPostCategory: string;
+  firstPostDate: string;
+  firstPostThumbnail: string;
+  firstPostDescription: string;
 }
 
-export async function getSeriesSummary(): Promise<SeriesSummary[]> {
+export async function getTrackSummary(): Promise<TrackSummary[]> {
   const { data, error } = await supabase.rpc('get_series_summary');
   if (error) throw error;
 
   return (data ?? []).map((row: any) => ({
     id: row.id,
-    series_name: row.series_name,
+    trackName: row.series_name,
     description: row.description,
-    thumbnail_url: row.thumbnail_url,
-    post_count: Number(row.post_count),
-    first_post_category: row.first_post_category,
-    first_post_date: row.first_post_date,
-    first_post_thumbnail: row.first_post_thumbnail,
-    first_post_description: row.first_post_description,
+    thumbnailUrl: row.thumbnail_url,
+    postCount: Number(row.post_count),
+    firstPostCategory: row.first_post_category,
+    firstPostDate: row.first_post_date,
+    firstPostThumbnail: row.first_post_thumbnail,
+    firstPostDescription: row.first_post_description,
   }));
 }
 
-export async function getSeriesPosts(series_id: number): Promise<Post[]> {
-  const { data, error } = await supabase.rpc('get_series_posts', { series_id });
+export async function getTrackPosts(trackId: number): Promise<Post[]> {
+  const { data, error } = await supabase.rpc('get_series_posts', { series_id: trackId });
   if (error) throw error;
-
-  const mapped: Post[] = (data ?? []).map((item: any) => ({
-    id: item.post.id,
-    title: item.post.title,
-    category: item.post.category,
-    description: item.post.description,
-    date: new Date(item.post.date).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('/', '-'),
-    series_id: item.post.series_id,
-    thumbnail: item.post.thumbnail,
-    content: item.post_detail?.content ?? '',
-    tag: item.post_detail?.tag ?? [],
-    post_id: item.post_detail?.post_id ?? item.post.id,
-  }));
-
-  return mapped;
+  return (data ?? []).map(mapPostRow);
 }
 
-export async function getSeriesInfo(series_id: number) {
+export async function getTrackInfo(trackId: number) {
   const { data, error } = await supabase.rpc('get_series_name', {
-    series_id,
+    series_id: trackId,
   });
   if (error) console.error(error);
 
-  const series_info: SeriesInfo = {
+  const info: TrackInfo = {
     id: data.id,
-    series_name: data.series_name,
+    trackName: data.series_name,
   };
-  return series_info;
+  return info;
+}
+
+export interface TrackDetail {
+  id: number;
+  trackName: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+}
+
+export async function getTrackDetail(trackId: number): Promise<TrackDetail | null> {
+  const { data, error } = await supabase
+    .from('series')
+    .select('id, series_name, description, thumbnail_url')
+    .eq('id', trackId)
+    .single();
+  if (error) {
+    console.error(error);
+    return null;
+  }
+  return {
+    id: data.id,
+    trackName: data.series_name,
+    description: data.description,
+    thumbnailUrl: data.thumbnail_url,
+  };
 }
 
 export async function getVariables(p_key: string): Promise<string | undefined> {

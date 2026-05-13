@@ -9,7 +9,7 @@ export interface PostInfo {
   category: string;
   description: string;
   date: string;
-  series_id: number;
+  trackId: number | null;
   thumbnail: string;
 }
 
@@ -22,9 +22,9 @@ export interface PostDetail {
 
 export interface Post extends PostInfo, PostDetail {}
 
-export interface SeriesInfo {
+export interface TrackInfo {
   id: number;
-  series_name: string;
+  trackName: string;
 }
 
 // ============ 테스트 중 ==================

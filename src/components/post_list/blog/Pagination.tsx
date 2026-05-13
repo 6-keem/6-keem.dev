@@ -2,19 +2,19 @@
 
 import { useRouter } from 'next/navigation';
 import ChevronIcon from './ChevronIcon';
-import { smoothScrollTo } from '@/lib/smooth-scroll';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   basePath: string;
+  anchorId?: string;
 }
 
 function pageHref(basePath: string, page: number) {
   return page === 1 ? basePath : `${basePath}?page=${page}`;
 }
 
-export default function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, basePath, anchorId }: PaginationProps) {
   const router = useRouter();
 
   if (totalPages <= 1) return null;
@@ -28,9 +28,9 @@ export default function Pagination({ currentPage, totalPages, basePath }: Pagina
   const navigate = (page: number) => {
     if (page === currentPage) return;
     router.push(pageHref(basePath, page), { scroll: false });
-    // Smooth scroll to top of viewport on the current view; new content
-    // renders within the same scroll position.
-    smoothScrollTo(0, 0);
+    if (anchorId) {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (

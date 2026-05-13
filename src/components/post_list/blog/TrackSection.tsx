@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export interface SeriesCardData {
+export interface TrackCardData {
   id: number;
   name: string;
   description?: string;
@@ -9,7 +9,7 @@ export interface SeriesCardData {
   href: string;
 }
 
-function SeriesCard({ data }: { data: SeriesCardData }) {
+function TrackCard({ data }: { data: TrackCardData }) {
   return (
     <Link
       href={data.href}
@@ -35,16 +35,16 @@ function SeriesCard({ data }: { data: SeriesCardData }) {
   );
 }
 
-export default function SeriesSection({ series }: { series: SeriesCardData[] }) {
-  if (!series.length) return null;
+export default function TrackSection({ tracks }: { tracks: TrackCardData[] }) {
+  if (!tracks.length) return null;
   return (
     <section className="mx-auto mt-20 mb-24 w-full max-w-[1130px] px-4 md:px-12">
       <h2 className="text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight mb-2">
-        아티클 시리즈
+        Track
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
-        {series.map((s) => (
-          <SeriesCard key={s.id} data={s} />
+        {tracks.map((t) => (
+          <TrackCard key={t.id} data={t} />
         ))}
       </div>
     </section>

@@ -3,11 +3,11 @@ import {
   getPostsCount,
   getPostsLazy,
   getRandomPosts,
-  getSeriesSummary,
+  getTrackSummary,
 } from '@/lib/supabase-function';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
-import SeriesSection, { SeriesCardData } from './blog/SeriesSection';
+import TrackSection, { TrackCardData } from './blog/TrackSection';
 import RandomPicks from './blog/RandomPicks';
 
 const PAGE_SIZE = 5;
@@ -17,21 +17,16 @@ interface PostListProps {
   page?: number;
 }
 
-async function loadSeriesCards(): Promise<SeriesCardData[]> {
-  const summary = await getSeriesSummary();
-  return summary.map((s) => {
-    const date = new Date(s.first_post_date)
-      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      .replaceAll('/', '-');
-    return {
-      id: s.id,
-      name: s.series_name,
-      description: s.description ?? s.first_post_description,
-      count: s.post_count,
-      thumbnail: s.thumbnail_url ?? s.first_post_thumbnail,
-      href: `/blog/${s.first_post_category}/${date}`,
-    } satisfies SeriesCardData;
-  });
+async function loadTrackCards(): Promise<TrackCardData[]> {
+  const summary = await getTrackSummary();
+  return summary.map((t) => ({
+    id: t.id,
+    name: t.trackName,
+    description: t.description ?? t.firstPostDescription,
+    count: t.postCount,
+    thumbnail: t.thumbnailUrl ?? t.firstPostThumbnail,
+    href: `/blog/track/${t.id}`,
+  } satisfies TrackCardData));
 }
 
 const PostListPage = async ({ category, page = 1 }: PostListProps) => {
@@ -39,12 +34,12 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const safePage = Math.max(1, page);
   const offset = (safePage - 1) * PAGE_SIZE;
 
-  const [pagePosts, totalCount, heroPosts, randomPicks, series] = await Promise.all([
+  const [pagePosts, totalCount, heroPosts, randomPicks, tracks] = await Promise.all([
     getPostsLazy(category, PAGE_SIZE, offset),
     getPostsCount(category),
     getHeroPosts(),
     isRoot ? getRandomPosts(5) : Promise.resolve([]),
-    isRoot ? loadSeriesCards() : Promise.resolve([]),
+    isRoot ? loadTrackCards() : Promise.resolve([]),
   ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const basePath = category ? `/blog/${category}` : '/blog';
@@ -85,7 +80,7 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
         )}
       </section>
 
-      {isRoot && <SeriesSection series={series} />}
+      {isRoot && <TrackSection tracks={tracks} />}
     </>
   );
 };

@@ -29,7 +29,7 @@ const PostDetail = async ({ params }: { params: Props }) => {
           <PostBody currentPost={currentPost} />
         </article>
       </div>
-      <PostFooter post={currentPost} posts={post} />
+      <PostFooter currentPost={currentPost} />
     </div>
   );
 };
