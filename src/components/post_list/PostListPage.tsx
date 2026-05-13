@@ -42,12 +42,13 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const [pagePosts, totalCount, heroPosts, randomPicks, series] = await Promise.all([
     getPostsLazy(category, PAGE_SIZE, offset),
     getPostsCount(category),
-    isRoot ? getHeroPosts() : Promise.resolve([]),
+    getHeroPosts(),
     isRoot ? getRandomPosts(5) : Promise.resolve([]),
     isRoot ? loadSeriesCards() : Promise.resolve([]),
   ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const basePath = category ? `/blog/${category}` : '/blog';
+  const recommendedIds = new Set(heroPosts.map((p) => p.id));
 
   return (
     <>
@@ -63,6 +64,7 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
                 currentPage={safePage}
                 totalPages={totalPages}
                 basePath={basePath}
+                recommendedIds={recommendedIds}
               />
             </main>
             <aside className="lg:sticky lg:top-24">
@@ -77,6 +79,7 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
               currentPage={safePage}
               totalPages={totalPages}
               basePath={basePath}
+              recommendedIds={recommendedIds}
             />
           </main>
         )}

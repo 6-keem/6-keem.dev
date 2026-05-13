@@ -2,20 +2,26 @@
 
 import { Post } from '@/config/types';
 import Image from 'next/image';
-import { Flame } from 'lucide-react';
+import { Flame, ThumbsUp } from 'lucide-react';
 import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
 interface Props {
   post: Post;
+  isRecommended?: boolean;
   isHot?: boolean;
 }
 
-export const PostHeader = ({ post, isHot = false }: Props) => {
+export const PostHeader = ({ post, isRecommended = false, isHot = false }: Props) => {
   const navigate = useNavigateAndScrollTop();
 
   return (
     <header className="my-14 text-center space-y-8">
       <div className="flex flex-wrap justify-center items-center gap-2">
+        {isRecommended && (
+          <span className="inline-flex items-center text-recommend bg-recommend-soft rounded-md px-2 py-1" aria-label="recommended">
+            <ThumbsUp className="h-4 w-4" />
+          </span>
+        )}
         {isHot && (
           <span className="inline-flex items-center text-hot bg-hot-soft rounded-md px-2 py-1" aria-label="hot">
             <Flame className="h-4 w-4" />
