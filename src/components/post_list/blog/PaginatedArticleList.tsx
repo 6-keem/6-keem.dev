@@ -8,14 +8,15 @@ interface Props {
   currentPage: number;
   totalPages: number;
   basePath: string;
+  hotIds?: Set<number>;
 }
 
-export default function PaginatedArticleList({ posts, category, currentPage, totalPages, basePath }: Props) {
+export default function PaginatedArticleList({ posts, category, currentPage, totalPages, basePath, hotIds }: Props) {
   const title = category ?? '전체 아티클';
 
   return (
     <div className="scroll-mt-20">
-      <ArticleList posts={posts} title={title} />
+      <ArticleList posts={posts} title={title} hotIds={hotIds} />
       <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} />
     </div>
   );
