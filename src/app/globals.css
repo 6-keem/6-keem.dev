@@ -62,6 +62,8 @@
     --title-hover: #3182f6;
 
     /* Status badges */
+    --recommend: #b45309;
+    --recommend-soft: #fef3c7;
     --hot: #b91c1c;
     --hot-soft: #fee2e2;
   }
@@ -112,6 +114,8 @@
     --title-hover: #4a90ff;
 
     /* Status badges */
+    --recommend: #fbbf24;
+    --recommend-soft: #3a2d10;
     --hot: #ff6b6b;
     --hot-soft: #3a1414;
   }

@@ -79,6 +79,10 @@ const config = {
           foreground: 'var(--brand-foreground)',
           soft: 'var(--brand-soft)',
         },
+        recommend: {
+          DEFAULT: 'var(--recommend)',
+          soft: 'var(--recommend-soft)',
+        },
         hot: {
           DEFAULT: 'var(--hot)',
           soft: 'var(--hot-soft)',

@@ -1,17 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { Flame } from 'lucide-react';
+import { Flame, ThumbsUp } from 'lucide-react';
 import type { Post } from '@/config/types';
 import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
 function ArticleItem({
   post,
   isFirst,
+  isRecommended = false,
   isHot = false,
 }: {
   post: Post;
   isFirst: boolean;
+  isRecommended?: boolean;
   isHot?: boolean;
 }) {
   const navigate = useNavigateAndScrollTop();
@@ -23,6 +25,11 @@ function ArticleItem({
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2 mb-3">
+          {isRecommended && (
+            <span className="inline-flex items-center text-recommend bg-recommend-soft rounded-md px-2 py-1" aria-label="recommended">
+              <ThumbsUp className="h-4 w-4" />
+            </span>
+          )}
           {isHot && (
             <span className="inline-flex items-center text-hot bg-hot-soft rounded-md px-2 py-1" aria-label="hot">
               <Flame className="h-4 w-4" />
@@ -62,10 +69,12 @@ function ArticleItem({
 export default function ArticleList({
   posts,
   title = '전체 아티클',
+  recommendedIds,
   hotIds,
 }: {
   posts: Post[];
   title?: string;
+  recommendedIds?: Set<number>;
   hotIds?: Set<number>;
 }) {
   return (
@@ -77,6 +86,7 @@ export default function ArticleList({
             key={post.id}
             post={post}
             isFirst={i === 0}
+            isRecommended={recommendedIds?.has(post.id)}
             isHot={hotIds?.has(post.id)}
           />
         ))}
