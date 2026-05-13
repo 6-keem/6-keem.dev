@@ -1,10 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import { Flame } from 'lucide-react';
 import type { Post } from '@/config/types';
 import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
-function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
+function ArticleItem({
+  post,
+  isFirst,
+  isHot = false,
+}: {
+  post: Post;
+  isFirst: boolean;
+  isHot?: boolean;
+}) {
   const navigate = useNavigateAndScrollTop();
 
   return (
@@ -13,7 +22,12 @@ function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
       className={`group grid grid-cols-[1fr_140px] md:grid-cols-[1fr_200px] gap-6 md:gap-8 items-center py-8 ${isFirst ? 'pt-0' : ''}`}
     >
       <div className="min-w-0">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {isHot && (
+            <span className="inline-flex items-center text-hot bg-hot-soft rounded-md px-2 py-1" aria-label="hot">
+              <Flame className="h-4 w-4" />
+            </span>
+          )}
           <button
             type="button"
             onClick={(e) => {
@@ -45,13 +59,26 @@ function ArticleItem({ post, isFirst }: { post: Post; isFirst: boolean }) {
   );
 }
 
-export default function ArticleList({ posts, title = '전체 아티클' }: { posts: Post[]; title?: string }) {
+export default function ArticleList({
+  posts,
+  title = '전체 아티클',
+  hotIds,
+}: {
+  posts: Post[];
+  title?: string;
+  hotIds?: Set<number>;
+}) {
   return (
     <section>
       <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-2">{title}</h2>
       <div className="mt-9">
         {posts.map((post, i) => (
-          <ArticleItem key={post.id} post={post} isFirst={i === 0} />
+          <ArticleItem
+            key={post.id}
+            post={post}
+            isFirst={i === 0}
+            isHot={hotIds?.has(post.id)}
+          />
         ))}
       </div>
     </section>

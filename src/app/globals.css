@@ -60,6 +60,10 @@
 
     /* Title hover */
     --title-hover: #3182f6;
+
+    /* Status badges */
+    --hot: #b91c1c;
+    --hot-soft: #fee2e2;
   }
 
   .dark {
@@ -106,6 +110,10 @@
 
     /* Title hover */
     --title-hover: #4a90ff;
+
+    /* Status badges */
+    --hot: #ff6b6b;
+    --hot-soft: #3a1414;
   }
 
   * {

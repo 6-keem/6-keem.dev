@@ -2,18 +2,25 @@
 
 import { Post } from '@/config/types';
 import Image from 'next/image';
+import { Flame } from 'lucide-react';
 import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
 interface Props {
   post: Post;
+  isHot?: boolean;
 }
 
-export const PostHeader = ({ post }: Props) => {
+export const PostHeader = ({ post, isHot = false }: Props) => {
   const navigate = useNavigateAndScrollTop();
 
   return (
     <header className="my-14 text-center space-y-8">
-      <div className="flex justify-center items-center gap-2">
+      <div className="flex flex-wrap justify-center items-center gap-2">
+        {isHot && (
+          <span className="inline-flex items-center text-hot bg-hot-soft rounded-md px-2 py-1" aria-label="hot">
+            <Flame className="h-4 w-4" />
+          </span>
+        )}
         <button
           type="button"
           onClick={() => navigate(`/blog/${post.category}`)}

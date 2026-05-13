@@ -79,6 +79,10 @@ const config = {
           foreground: 'var(--brand-foreground)',
           soft: 'var(--brand-soft)',
         },
+        hot: {
+          DEFAULT: 'var(--hot)',
+          soft: 'var(--hot-soft)',
+        },
         'title-hover': 'var(--title-hover)',
       },
       typography: {
