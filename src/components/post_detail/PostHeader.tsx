@@ -3,7 +3,7 @@
 import { Post } from '@/config/types';
 import Image from 'next/image';
 import { Flame, ThumbsUp } from 'lucide-react';
-import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   post: Post;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const PostHeader = ({ post, isRecommended = false, isHot = false }: Props) => {
-  const navigate = useNavigateAndScrollTop();
+  const router = useRouter();
 
   return (
     <header className="my-14 text-center space-y-8">
@@ -29,7 +29,7 @@ export const PostHeader = ({ post, isRecommended = false, isHot = false }: Props
         )}
         <button
           type="button"
-          onClick={() => navigate(`/blog/${post.category}`)}
+          onClick={() => router.push(`/blog/${post.category}`)}
           className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
         >
           {post.category}

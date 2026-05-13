@@ -16,9 +16,9 @@ export default function PaginatedArticleList({ posts, category, currentPage, tot
   const title = category ?? '전체 아티클';
 
   return (
-    <div className="scroll-mt-20">
+    <div id="article-list-top" className="scroll-mt-20">
       <ArticleList posts={posts} title={title} recommendedIds={recommendedIds} hotIds={hotIds} />
-      <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} anchorId="article-list-top" />
     </div>
   );
 }
