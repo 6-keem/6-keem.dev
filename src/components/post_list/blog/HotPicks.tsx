@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Post } from '@/config/types';
 
-export default function RandomPicks({ posts }: { posts: Post[] }) {
+export default function HotPicks({ posts }: { posts: Post[] }) {
   return (
     <div className="rounded-[20px] bg-muted px-5 py-7">
       <h3 className="text-lg font-bold text-muted-foreground tracking-tight mb-6">이 글은 어때요? &nbsp; 🦅</h3>
