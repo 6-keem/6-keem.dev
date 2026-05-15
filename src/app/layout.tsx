@@ -3,7 +3,6 @@ import MyThemeProvider from '@/components/provider/ThemeProvider';
 import { Header } from '@/components/nav/Header';
 import { Footer } from '@/components/footer/Footer';
 import { ScrollProvider } from '@/components/provider/ScrollProvider';
-import { GlowBackground } from '@/components/GlowBackground';
 import { Metadata } from 'next';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { Suspense } from 'react';

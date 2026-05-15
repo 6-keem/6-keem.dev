@@ -15,7 +15,6 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Badge } from '@/components/ui/badge';
 import { ProjectBody } from '@/components/project-detail/project-body';
 import ReactMarkdown from 'react-markdown';
-// import { getVariables } from '@/lib/supabase-function';
 
 type Props = Promise<{ locale: Locale }>;
 
@@ -39,8 +38,6 @@ export default async function AboutPage({ params }: { params: Props }) {
   // Async data fetching directly inside the component
   const projectList = await getSortedProjectList(locale);
   const careerProjectList = await getCareerProjectList(locale);
-
-  // const resume_url = await getVariables('resume_url');
 
   return (
     <main className="container relative mx-auto scroll-my-12 overflow-auto p-6 sm:p-9 md:p-16 print:p-12 print:pt-0">
