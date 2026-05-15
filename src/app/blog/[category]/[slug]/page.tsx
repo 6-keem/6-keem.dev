@@ -1,9 +1,11 @@
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PostBody } from '@/components/post_detail/PostBody';
 import { PostFooter } from '@/components/post_detail/PostFooter';
 import { PostHeader } from '@/components/post_detail/PostHeader';
 import ViewTracker from '@/components/post_detail/ViewTracker';
 import { TocRegistrar } from '@/components/post_list/TocRegister';
+import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { parseToc } from '@/lib/post';
 import {
   getHeroPosts,
@@ -22,6 +24,41 @@ export const revalidate = 3600;
 export async function generateStaticParams() {
   const idx = await getPostsIndex();
   return idx.map((p) => ({ category: p.category, slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Props }): Promise<Metadata> {
+  const { category, slug } = await params;
+  const decodedCategory = decodeURIComponent(category);
+  const decodedSlug = decodeURIComponent(slug);
+  const detail = await getPostDetail(decodedCategory, decodedSlug);
+  const post = detail[0];
+  if (!post) {
+    return { title: blogName };
+  }
+
+  const url = `${baseDomain}/blog/${decodedCategory}/${decodedSlug}`;
+  const image = post.thumbnail || blogThumbnailURL;
+  const description = post.description || undefined;
+  const title = `${post.title} | ${blogName}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'article',
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 const PostDetail = async ({ params }: { params: Props }) => {

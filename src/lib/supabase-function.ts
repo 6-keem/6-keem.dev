@@ -1,12 +1,56 @@
 import { Post } from '@/config/types';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from './supabase';
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+interface PostRow {
+  id: number;
+  title: string;
+  category: string;
+  description: string | null;
+  date: string;
+  track_id: number | null;
+  thumbnail: string | null;
+  published?: boolean;
+}
 
-export async function getCategoryList() {
+interface PostDetailRow {
+  post_id: number;
+  content: string | null;
+  tag: string[] | null;
+}
+
+interface PostRpcRow {
+  post: PostRow;
+  post_detail: PostDetailRow | null;
+}
+
+interface PostsIndexRow {
+  category: string;
+  post_date: string;
+}
+
+interface TrackSummaryRow {
+  id: number;
+  track_name: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  post_count: number | string;
+  first_post_category: string;
+  first_post_date: string;
+  first_post_thumbnail: string;
+  first_post_description: string;
+}
+
+interface TrackRow {
+  id: number;
+  track_name: string;
+  description: string | null;
+  thumbnail_url: string | null;
+}
+
+export async function getCategoryList(): Promise<string[]> {
   const { data, error } = await supabase.rpc('get_category_list');
   if (error) throw error;
-  return data;
+  return (data ?? []) as string[];
 }
 
 function formatPostDate(raw: string): string {
@@ -20,27 +64,27 @@ function formatPostDate(raw: string): string {
     .replaceAll('/', '-');
 }
 
-function mapPostRow(item: any): Post {
+function mapPostRow(item: PostRpcRow): Post {
   return {
     id: item.post.id,
     title: item.post.title,
     category: item.post.category,
-    description: item.post.description,
+    description: item.post.description ?? '',
     date: formatPostDate(item.post.date),
     trackId: item.post.track_id ?? null,
-    thumbnail: item.post.thumbnail,
+    thumbnail: item.post.thumbnail ?? '',
     content: item.post_detail?.content ?? '',
     tag: item.post_detail?.tag ?? [],
     post_id: item.post_detail?.post_id ?? item.post.id,
   };
 }
 
-export async function getPosts(filter_category?: string) {
+export async function getPosts(filter_category?: string): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_posts', {
     filter_category: filter_category ?? null,
   });
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export async function getPostsCount(filter_category?: string): Promise<number> {
@@ -51,44 +95,48 @@ export async function getPostsCount(filter_category?: string): Promise<number> {
   return typeof data === 'number' ? data : Number(data ?? 0);
 }
 
-export async function getPostsLazy(filter_category?: string, limit: number = 12, offset: number = 0) {
+export async function getPostsLazy(
+  filter_category?: string,
+  limit: number = 12,
+  offset: number = 0,
+): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_posts_lazy', {
     filter_category: filter_category ?? null,
     p_limit: limit,
     p_offset: offset,
   });
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export async function getHeroPosts(): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_hero_posts');
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export async function getHotPosts(p_limit: number = 5, p_window_days: number = 7): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_hot_posts', { p_limit, p_window_days });
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export async function getPostsIndex(): Promise<{ category: string; slug: string }[]> {
   const { data, error } = await supabase.rpc('get_posts_index');
   if (error) throw error;
-  return (data ?? []).map((row: { category: string; post_date: string }) => ({
+  return ((data ?? []) as PostsIndexRow[]).map((row) => ({
     category: row.category,
     slug: formatPostDate(row.post_date),
   }));
 }
 
-export async function getPostDetail(filter_category: string, filter_date: string) {
+export async function getPostDetail(filter_category: string, filter_date: string): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_post_detail', {
     filter_category,
     filter_date: filter_date ? filter_date.split('T')[0] : null,
   });
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export interface TrackSummary {
@@ -107,7 +155,7 @@ export async function getTrackSummary(): Promise<TrackSummary[]> {
   const { data, error } = await supabase.rpc('get_track_summary');
   if (error) throw error;
 
-  return (data ?? []).map((row: any) => ({
+  return ((data ?? []) as TrackSummaryRow[]).map((row) => ({
     id: row.id,
     trackName: row.track_name,
     description: row.description,
@@ -123,7 +171,7 @@ export async function getTrackSummary(): Promise<TrackSummary[]> {
 export async function getTrackPosts(trackId: number): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_track_posts', { track_id: trackId });
   if (error) throw error;
-  return (data ?? []).map(mapPostRow);
+  return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
 export interface TrackDetail {
@@ -138,7 +186,7 @@ export async function getTrackDetail(trackId: number): Promise<TrackDetail | nul
     .from('track')
     .select('id, track_name, description, thumbnail_url')
     .eq('id', trackId)
-    .single();
+    .single<TrackRow>();
   if (error) {
     if (error.code === 'PGRST116') return null;
     throw error;
@@ -150,4 +198,3 @@ export async function getTrackDetail(trackId: number): Promise<TrackDetail | nul
     thumbnailUrl: data.thumbnail_url,
   };
 }
-

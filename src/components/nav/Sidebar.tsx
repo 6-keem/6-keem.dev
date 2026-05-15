@@ -32,7 +32,7 @@ export default function Sidebar() {
   const { open } = useSidebar();
   const currentPath = usePathname();
   const navItems = [
-    { path: '/blog', label: '블로그' },
+    { path: '/', label: '블로그' },
     { path: '/gallery', label: '갤러리' },
     { path: '/about', label: '프로필' },
   ];
@@ -47,13 +47,13 @@ export default function Sidebar() {
     >
       <div className="p-4">
         <motion.ul key={currentPath} variants={containerVariants} initial="hidden" animate="visible">
-          {currentPath.split('/').length !== 2 && currentPath.includes('blog') && (
+          {currentPath !== '/' && (currentPath === '/blog' || currentPath.startsWith('/blog/')) && (
             <motion.li variants={itemVariants}>
               <Link
-                href={'/blog'}
-                key={'/blog'}
+                href={'/'}
+                key={'/'}
                 onClick={(e) => {
-                  if (currentPath === '/blog') {
+                  if (currentPath === '/') {
                     e.preventDefault();
                   }
                 }}
@@ -79,7 +79,7 @@ export default function Sidebar() {
               <Link
                 href={item.path}
                 onClick={(e) => {
-                  if (currentPath === item.path && item.path !== '/blog') {
+                  if (currentPath === item.path && item.path !== '/') {
                     e.preventDefault();
                   }
                 }}
