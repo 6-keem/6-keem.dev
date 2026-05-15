@@ -1,4 +1,4 @@
-import { Post, TrackInfo } from '@/config/types';
+import { Post } from '@/config/types';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
@@ -27,7 +27,7 @@ function mapPostRow(item: any): Post {
     category: item.post.category,
     description: item.post.description,
     date: formatPostDate(item.post.date),
-    trackId: item.post.series_id ?? null,
+    trackId: item.post.track_id ?? null,
     thumbnail: item.post.thumbnail,
     content: item.post_detail?.content ?? '',
     tag: item.post_detail?.tag ?? [],
@@ -63,12 +63,6 @@ export async function getPostsLazy(filter_category?: string, limit: number = 12,
 
 export async function getHeroPosts(): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_hero_posts');
-  if (error) throw error;
-  return (data ?? []).map(mapPostRow);
-}
-
-export async function getRandomPosts(p_limit: number = 5): Promise<Post[]> {
-  const { data, error } = await supabase.rpc('get_random_posts', { p_limit });
   if (error) throw error;
   return (data ?? []).map(mapPostRow);
 }
@@ -110,12 +104,12 @@ export interface TrackSummary {
 }
 
 export async function getTrackSummary(): Promise<TrackSummary[]> {
-  const { data, error } = await supabase.rpc('get_series_summary');
+  const { data, error } = await supabase.rpc('get_track_summary');
   if (error) throw error;
 
   return (data ?? []).map((row: any) => ({
     id: row.id,
-    trackName: row.series_name,
+    trackName: row.track_name,
     description: row.description,
     thumbnailUrl: row.thumbnail_url,
     postCount: Number(row.post_count),
@@ -127,22 +121,9 @@ export async function getTrackSummary(): Promise<TrackSummary[]> {
 }
 
 export async function getTrackPosts(trackId: number): Promise<Post[]> {
-  const { data, error } = await supabase.rpc('get_series_posts', { series_id: trackId });
+  const { data, error } = await supabase.rpc('get_track_posts', { track_id: trackId });
   if (error) throw error;
   return (data ?? []).map(mapPostRow);
-}
-
-export async function getTrackInfo(trackId: number) {
-  const { data, error } = await supabase.rpc('get_series_name', {
-    series_id: trackId,
-  });
-  if (error) console.error(error);
-
-  const info: TrackInfo = {
-    id: data.id,
-    trackName: data.series_name,
-  };
-  return info;
 }
 
 export interface TrackDetail {
@@ -154,31 +135,19 @@ export interface TrackDetail {
 
 export async function getTrackDetail(trackId: number): Promise<TrackDetail | null> {
   const { data, error } = await supabase
-    .from('series')
-    .select('id, series_name, description, thumbnail_url')
+    .from('track')
+    .select('id, track_name, description, thumbnail_url')
     .eq('id', trackId)
     .single();
   if (error) {
-    console.error(error);
-    return null;
+    if (error.code === 'PGRST116') return null;
+    throw error;
   }
   return {
     id: data.id,
-    trackName: data.series_name,
+    trackName: data.track_name,
     description: data.description,
     thumbnailUrl: data.thumbnail_url,
   };
 }
 
-export async function getVariables(p_key: string): Promise<string | undefined> {
-  const { data, error } = await supabase.rpc('get_variables', {
-    p_key,
-  });
-  if (error) console.error(error);
-
-  if (Array.isArray(data) && data.length > 0) {
-    return data[0];
-  }
-
-  return undefined;
-}

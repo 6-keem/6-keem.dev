@@ -28,7 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         async session({ session, token }) {
             if (token.followers) {
-                session.user.followers = token.followers as any[];
+                session.user.followers = token.followers;
             }
             return session;
         },
