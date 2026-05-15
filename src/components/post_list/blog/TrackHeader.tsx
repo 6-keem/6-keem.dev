@@ -18,7 +18,7 @@ export default function TrackHeader({ trackName, description, thumbnailUrl, post
             <Layers className="w-24 h-24 text-muted-foreground/40" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5 dark:from-black/85 dark:via-black/40 dark:to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
           <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight tracking-tight drop-shadow">
             {trackName}
