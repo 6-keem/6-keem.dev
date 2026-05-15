@@ -1,9 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'crypto';
 import { cookies } from 'next/headers';
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 const BOT_UA = /bot|crawler|spider|crawling|preview|slurp|fetch|monitor/i;
 const COOKIE_MAX_AGE = 60 * 60 * 24;
+const IP_WINDOW_HOURS = 24;
+
+function clientIp(req: NextRequest): string | null {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0]?.trim() || null;
+  return req.headers.get('x-real-ip') || null;
+}
+
+function hashIp(ip: string): string | null {
+  const salt = process.env.VIEW_IP_SALT;
+  if (!salt) return null;
+  return createHash('sha256').update(`${salt}:${ip}`).digest('hex');
+}
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,15 +37,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true, skipped: 'cookie' });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-  const { error } = await supabase.rpc('increment_post_view', { p_post_id: postId });
+  const ip = clientIp(req);
+  const ipHash = ip ? hashIp(ip) : null;
+
+  const { data, error } = await supabase.rpc('increment_post_view', {
+    p_post_id: postId,
+    p_ip_hash: ipHash,
+    p_window_hours: IP_WINDOW_HOURS,
+  });
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 
+  // Always set the cookie — even when the DB skipped (data === false) — so
+  // subsequent requests from the same browser hit the fast path.
   cookieStore.set(cookieName, '1', {
     maxAge: COOKIE_MAX_AGE,
     httpOnly: true,
@@ -39,5 +58,5 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     path: '/',
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, counted: data === true });
 }

@@ -16,10 +16,10 @@ export const Giscus = () => {
         scriptElem.async = true;
         scriptElem.crossOrigin = "anonymous";
 
-        scriptElem.setAttribute("data-repo", "6-keem/6-keem.dev");
-        scriptElem.setAttribute("data-repo-id", "R_kgDONd58DQ");
-        scriptElem.setAttribute("data-category", "Comments");
-        scriptElem.setAttribute("data-category-id", "DIC_kwDONd58Dc4Cl8U7");
+        scriptElem.setAttribute("data-repo", process.env.NEXT_PUBLIC_GISCUS_REPO ?? "");
+        scriptElem.setAttribute("data-repo-id", process.env.NEXT_PUBLIC_GISCUS_REPO_ID ?? "");
+        scriptElem.setAttribute("data-category", process.env.NEXT_PUBLIC_GISCUS_CATEGORY ?? "Comments");
+        scriptElem.setAttribute("data-category-id", process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID ?? "");
         scriptElem.setAttribute("data-mapping", "pathname");
         scriptElem.setAttribute("data-strict", "0");
         scriptElem.setAttribute("data-reactions-enabled", "1");

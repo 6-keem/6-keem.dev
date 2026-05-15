@@ -1,9 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Flame, ThumbsUp } from 'lucide-react';
 import type { Post } from '@/config/types';
 import ScrollTopLink from '@/components/common/ScrollTopLink';
+import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
 function ArticleItem({
   post,
@@ -16,7 +16,7 @@ function ArticleItem({
   isRecommended?: boolean;
   isHot?: boolean;
 }) {
-  const router = useRouter();
+  const navigate = useNavigateAndScrollTop();
   const href = `/blog/${post.category}/${post.date.toString()}`;
 
   return (
@@ -41,7 +41,7 @@ function ArticleItem({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              router.push(`/blog/${post.category}`);
+              navigate(`/blog/${post.category}`);
             }}
             className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
           >

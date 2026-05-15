@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { Post } from '@/config/types';
-import { useRouter } from 'next/navigation';
 import ChevronIcon from './ChevronIcon';
 import ScrollTopLink from '@/components/common/ScrollTopLink';
+import { useNavigateAndScrollTop } from '@/lib/smooth-navigate';
 
 const AUTO_INTERVAL_MS = 10_000;
 
 export default function HeroSlider({ posts }: { posts: Post[] }) {
-  const router = useRouter();
+  const navigate = useNavigateAndScrollTop();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
 
@@ -44,7 +44,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    router.push(`/blog/${current.category}`);
+                    navigate(`/blog/${current.category}`);
                   }}
                   className="inline-block text-sm font-semibold text-brand bg-brand-soft rounded-md px-2.5 py-1 transition-transform duration-200 hover:scale-110"
                 >
