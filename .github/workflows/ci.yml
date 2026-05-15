@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Lint + type check only. `npm run build` is intentionally skipped here
+# because generateStaticParams hits Supabase at build time and the env keys
+# are owned by Vercel — Vercel itself is the source of truth for real
+# builds. Duplicating those secrets to GitHub just to satisfy CI would mean
+# two places to rotate them.
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit

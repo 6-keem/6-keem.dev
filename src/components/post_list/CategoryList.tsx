@@ -34,7 +34,7 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = 'All' }: C
       <section className="w-full hidden md:block pl-2">
         <div className="flex w-full justify-between items-center ">
           <ul className="flex gap-6">
-            <CategoryButton href="/blog" isCurrent={currentCategory === 'All'} displayName="All" />
+            <CategoryButton href="/" isCurrent={currentCategory === 'All'} displayName="All" />
             {categoryList.map((cg, index) => (
               <CategoryButton key={index} href={`/blog/${cg}`} displayName={cg} isCurrent={cg === currentCategory} />
             ))}

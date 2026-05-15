@@ -38,13 +38,17 @@ export async function generateMetadata({ params }: { params: Props }): Promise<M
   };
 }
 
-const CategoryPage = async ({ params }: { params: Props }) => {
+type SearchParams = Promise<{ page?: string }>;
+
+const CategoryPage = async ({ params, searchParams }: { params: Props; searchParams: SearchParams }) => {
   const { category } = await params;
+  const sp = await searchParams;
+  const page = sp.page ? Number(sp.page) : 1;
   const decodedCategory = decodeURIComponent(category);
   const isAdmin = await checkPermission();
   return (
     <div>
-      <PostListPage category={decodedCategory} />
+      <PostListPage category={decodedCategory} page={Number.isFinite(page) ? page : 1} />
       {isAdmin && (
         <section className="fixed left-1/2 bottom-8 -translate-x-1/2 w-max">
           <DockSection />

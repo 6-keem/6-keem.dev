@@ -8,16 +8,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GITHUB_SECRET!,
       authorization: {
         params: {
-          scope: 'read:user user:email',
+          scope: 'read:user user:follow user:email',
         },
       },
     }),
   ],
   callbacks: {
     async jwt({ token, account }) {
+      if (account?.access_token) {
+        const followersRes = await fetch('https://api.github.com/user/followers', {
+          headers: { Authorization: `Bearer ${account.access_token}` },
+        });
+        const followers = await followersRes.json();
+        token.followers = followers;
+      }
       return token;
     },
     async session({ session, token }) {
+      if (token.followers) {
+        session.user.followers = token.followers;
+      }
       return session;
     },
   },

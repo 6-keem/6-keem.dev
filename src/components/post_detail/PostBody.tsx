@@ -1,4 +1,4 @@
-import { Post, SeriesInfo } from '@/config/types';
+import { Post } from '@/config/types';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkA11yEmoji from '@fec/remark-a11y-emoji';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -7,31 +7,15 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import { MDXComponent } from '../mdx';
 import plasticTheme from '@/../plastic-theme.json';
-import Series from '../mdx/Series';
-import { getSeriesInfo } from '@/lib/supabase-function';
 
 interface Props {
   currentPost: Post;
-  posts: Post[];
 }
 
-export const PostBody = async ({ currentPost, posts }: Props) => {
-  let seriesPost: Post[] = [];
-  try {
-    seriesPost = posts.filter((p) => p.series_id === currentPost.series_id);
-  } catch {}
-
-  let seriesInfo: SeriesInfo | null = null;
-  if (currentPost.series_id) seriesInfo = await getSeriesInfo(currentPost.series_id);
-
+export const PostBody = async ({ currentPost }: Props) => {
   return (
     <div className="w-full max-w-[750px] mx-auto">
-      <hr className="mt-5 border-foreground-100" />
-      {currentPost.series_id !== undefined && currentPost.series_id && seriesInfo ? (
-        <Series seriesName={seriesInfo.series_name} slug={currentPost.date} posts={seriesPost} />
-      ) : (
-        <></>
-      )}
+      {/* <hr className="mt-5 border-foreground-100" /> */}
       <MDXRemote
         source={currentPost.content}
         options={{
