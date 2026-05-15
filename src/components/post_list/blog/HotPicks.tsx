@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ScrollTopLink from '@/components/common/ScrollTopLink';
 import type { Post } from '@/config/types';
 
 export default function HotPicks({ posts }: { posts: Post[] }) {
@@ -8,7 +8,7 @@ export default function HotPicks({ posts }: { posts: Post[] }) {
 
       <div className="flex flex-col gap-5">
         {posts.map((post, i) => (
-          <Link key={post.id} href={`/blog/${post.category}/${post.date.toString()}`} className="group flex items-start gap-3">
+          <ScrollTopLink key={post.id} href={`/blog/${post.category}/${post.date.toString()}`} className="group flex items-start gap-3">
             <div className="w-5 flex items-center justify-center text-sm font-bold text-brand shrink-0 pt-0.5">{i + 1}</div>
             <div className="min-w-0">
               <div className="text-sm font-semibold text-foreground/75 leading-snug line-clamp-3 mb-2 group-hover:text-title-hover transition-colors duration-200">
@@ -18,7 +18,7 @@ export default function HotPicks({ posts }: { posts: Post[] }) {
                 {post.category}
               </div>
             </div>
-          </Link>
+          </ScrollTopLink>
         ))}
       </div>
     </div>

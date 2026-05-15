@@ -1,10 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import type { Post } from '@/config/types';
 import { useRouter } from 'next/navigation';
 import ChevronIcon from './ChevronIcon';
+import ScrollTopLink from '@/components/common/ScrollTopLink';
 
 const AUTO_INTERVAL_MS = 10_000;
 
@@ -34,7 +34,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
 
   return (
     <section className="mx-auto mt-12 w-full max-w-[1130px] px-4 md:px-12">
-      <Link href={`/blog/${current.category}/${current.date.toString()}`} className="group/hero block">
+      <ScrollTopLink href={`/blog/${current.category}/${current.date.toString()}`} className="group/hero block">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-stretch min-h-[260px]">
           <div className="flex flex-col">
             <div key={index} className={`animate-in fade-in duration-1000 ${slideClass}`}>
@@ -98,7 +98,7 @@ export default function HeroSlider({ posts }: { posts: Post[] }) {
             )}
           </div>
         </div>
-      </Link>
+      </ScrollTopLink>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ScrollTopLink from '@/components/common/ScrollTopLink';
 import { Post } from '@/config/types';
 
 interface Props {
@@ -30,7 +30,7 @@ export default function Track({ trackId, trackName, description, slug, posts }: 
               <span className={`shrink-0 text-base font-semibold tabular-nums ${isCurrent ? 'text-title-hover' : 'text-muted-foreground'}`}>
                 {number}
               </span>
-              <Link
+              <ScrollTopLink
                 href={`/blog/${post.category}/${post.date}`}
                 className={`text-base leading-relaxed no-underline transition-colors duration-200 ${
                   isCurrent
@@ -39,7 +39,7 @@ export default function Track({ trackId, trackName, description, slug, posts }: 
                 }`}
               >
                 {post.title}
-              </Link>
+              </ScrollTopLink>
             </li>
           );
         })}
@@ -47,19 +47,19 @@ export default function Track({ trackId, trackName, description, slug, posts }: 
 
       <div className="flex justify-center gap-2 pb-6">
         {firstPost ? (
-          <Link
+          <ScrollTopLink
             href={`/blog/${firstPost.category}/${firstPost.date}`}
             className="inline-block rounded-lg bg-secondary text-secondary-foreground font-semibold text-sm px-5 py-2.5 no-underline hover:opacity-90"
           >
             처음부터 읽기
-          </Link>
+          </ScrollTopLink>
         ) : null}
-        <Link
+        <ScrollTopLink
           href={`/blog/track/${trackId}`}
           className="inline-block rounded-lg bg-brand text-brand-foreground font-semibold text-sm px-5 py-2.5 no-underline hover:opacity-90"
         >
           트랙 둘러보기
-        </Link>
+        </ScrollTopLink>
       </div>
     </div>
   );
