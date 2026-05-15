@@ -3,8 +3,7 @@ import { Metadata } from 'next';
 import PostListPage from '@/components/post_list/PostListPage';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { getCategoryList } from '@/lib/supabase-function';
-import { checkPermission } from '@/lib/auth';
-import DockSection from '@/components/dock/DockSection';
+import AdminActions from '@/components/admin/AdminActions';
 
 type Props = Promise<{ category: string }>;
 
@@ -45,16 +44,11 @@ const CategoryPage = async ({ params, searchParams }: { params: Props; searchPar
   const sp = await searchParams;
   const page = sp.page ? Number(sp.page) : 1;
   const decodedCategory = decodeURIComponent(category);
-  const isAdmin = await checkPermission();
   return (
-    <div>
+    <>
       <PostListPage category={decodedCategory} page={Number.isFinite(page) ? page : 1} />
-      {isAdmin && (
-        <section className="fixed left-1/2 bottom-8 -translate-x-1/2 w-max">
-          <DockSection />
-        </section>
-      )}
-    </div>
+      <AdminActions />
+    </>
   );
 };
 

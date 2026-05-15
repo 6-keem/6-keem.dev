@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import DockSection from '@/components/dock/DockSection';
+import AdminActions from '@/components/admin/AdminActions';
 import { PostBody } from '@/components/post_detail/PostBody';
 import { PostFooter } from '@/components/post_detail/PostFooter';
 import { PostHeader } from '@/components/post_detail/PostHeader';
 import ViewTracker from '@/components/post_detail/ViewTracker';
 import { TocRegistrar } from '@/components/post_list/TocRegister';
-import { checkPermission } from '@/lib/auth';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { parseToc } from '@/lib/post';
 import {
@@ -79,7 +78,6 @@ const PostDetail = async ({ params }: { params: Props }) => {
   const isHot = hotPosts.some((h) => h.id === currentPost.id);
   const toc = parseToc(currentPost.content);
 
-  const isAdmin = await checkPermission();
   return (
     <div className="prose mx-auto w-full px-5 dark:prose-invert sm:px-6 max-w-[750px]">
       <ViewTracker postId={currentPost.id} />
@@ -91,11 +89,7 @@ const PostDetail = async ({ params }: { params: Props }) => {
         </article>
       </div>
       <PostFooter currentPost={currentPost} />
-      {isAdmin && (
-        <section className="fixed left-1/2 bottom-8 -translate-x-1/2 w-max">
-          <DockSection postId={currentPost.id} />
-        </section>
-      )}
+      <AdminActions postId={currentPost.id} />
     </div>
   );
 };

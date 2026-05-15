@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       title: string;
       desc: string;
       tags: string[];
-      seriesId?: number | null;
+      trackId?: number | null;
       thumbnailUrl?: string;
       category?: string;
       isHero?: boolean;
@@ -35,14 +35,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'title is required' }, { status: 400 });
     }
 
-    const seriesId = meta.seriesId ?? null;
+    const trackId = meta.trackId ?? null;
 
     const { data, error } = await supabase.rpc('create_post', {
       title: meta.title,
       description: meta.desc ?? '',
       category: meta.category ?? 'Daily',
       date: new Date().toISOString(),
-      series_id: seriesId,
+      track_id: trackId,
       thumbnail: meta.thumbnailUrl ?? '',
       content,
       tag: (meta.tags ?? []).join(','),

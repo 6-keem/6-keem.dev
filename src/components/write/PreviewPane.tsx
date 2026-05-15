@@ -113,8 +113,8 @@ export default function PreviewPane({ meta, content, thumbnailPreview }: Props) 
           {meta.desc ? <p className="mt-4 text-base text-muted-foreground">{meta.desc}</p> : null}
 
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            {meta.seriesName ? (
-              <span className="rounded-full border border-border bg-background/60 px-3 py-1">Series: {meta.seriesName}</span>
+            {meta.trackName ? (
+              <span className="rounded-full border border-border bg-background/60 px-3 py-1">Track: {meta.trackName}</span>
             ) : null}
 
             {meta.tags.length > 0 ? (

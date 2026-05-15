@@ -4,9 +4,9 @@ import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-export type Series = {
+export type Track = {
   id: number;
-  series_name: string;
+  track_name: string;
   description: string | null;
   thumbnail_url: string | null;
 };
@@ -14,10 +14,10 @@ export type Series = {
 type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onCreated: (series: Series) => void;
+  onCreated: (track: Track) => void;
 };
 
-export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
+export default function TrackDialog({ open, onOpenChange, onCreated }: Props) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
@@ -71,12 +71,12 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
   const onSubmit = async () => {
     const trimmed = name.trim();
     if (!trimmed) {
-      toast.error('시리즈 이름을 입력해주세요');
+      toast.error('트랙 이름을 입력해주세요');
       return;
     }
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/series', {
+      const res = await fetch('/api/admin/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -89,13 +89,13 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
         const msg = await res.text();
         throw new Error(msg);
       }
-      const { data } = (await res.json()) as { data: Series };
-      toast.success('시리즈 생성 완료');
+      const { data } = (await res.json()) as { data: Track };
+      toast.success('트랙 생성 완료');
       onCreated(data);
       handleOpenChange(false);
     } catch (e: any) {
       console.error(e);
-      toast.error(e?.message ?? '시리즈 생성 실패');
+      toast.error(e?.message ?? '트랙 생성 실패');
     } finally {
       setSaving(false);
     }
@@ -105,7 +105,7 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>새 시리즈 만들기</DialogTitle>
+          <DialogTitle>새 트랙 만들기</DialogTitle>
         </DialogHeader>
 
         <div className="mt-2">
@@ -113,7 +113,7 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="시리즈 이름"
+            placeholder="트랙 이름"
             className={fieldBase}
             autoFocus
           />
@@ -124,7 +124,7 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="시리즈를 한 줄로 설명"
+            placeholder="트랙을 한 줄로 설명"
             className={fieldBase + ' resize-none'}
             rows={2}
           />
@@ -147,7 +147,7 @@ export default function SeriesDialog({ open, onOpenChange, onCreated }: Props) {
               <div className="flex items-start gap-4">
                 <img
                   src={thumbnailUrl}
-                  alt="series thumbnail"
+                  alt="track thumbnail"
                   className="h-20 w-32 rounded-xl object-cover border border-border"
                 />
                 <div className="text-sm text-muted-foreground">

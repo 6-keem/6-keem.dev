@@ -7,9 +7,9 @@ export default function ScrollLock() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const isWrite = pathname.startsWith('/write');
+    const isEditor = pathname.startsWith('/editor');
 
-    if (isWrite) {
+    if (isEditor) {
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
       document.body.style.height = '100dvh';

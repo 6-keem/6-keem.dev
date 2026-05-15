@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import TagInput from './TagInput';
 import ThumbnailDropzone from './ThumbnailDropzone';
 import StickyActionBar from './StickyActionBar';
-import SeriesPicker from './SeriesPicker';
+import TrackPicker from './TrackPicker';
 import CategoryPicker from './CategoryPicker';
 import { PostMeta } from './types';
 import EditorToolbar from './toolbar/EditorToolbar';
@@ -154,10 +154,10 @@ export default function EditorPane({
                 </div>
 
                 <div>
-                  <div className={label}>시리즈</div>
-                  <SeriesPicker
-                    seriesId={meta.seriesId}
-                    onChange={(id, name) => setMeta((m) => ({ ...m, seriesId: id, seriesName: name }))}
+                  <div className={label}>트랙</div>
+                  <TrackPicker
+                    trackId={meta.trackId}
+                    onChange={(id, name) => setMeta((m) => ({ ...m, trackId: id, trackName: name }))}
                   />
                 </div>
               </div>

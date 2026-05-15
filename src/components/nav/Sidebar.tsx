@@ -4,8 +4,9 @@ import { useSidebar } from '@/components/provider/SidebarProvider';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LogIn, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSession, signOut } from 'next-auth/react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,6 +32,7 @@ const itemVariants = {
 export default function Sidebar() {
   const { open } = useSidebar();
   const currentPath = usePathname();
+  const { data: session, status } = useSession();
   const navItems = [
     { path: '/', label: '블로그' },
     { path: '/gallery', label: '갤러리' },
@@ -40,12 +42,12 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed top-14 bottom-8 left-0 z-30 h-screen w-48 pt-28 bg-background',
+        'fixed top-14 bottom-0 left-0 z-30 w-48 pt-28 bg-background flex flex-col',
         'transition-transform duration-300 ease-in-out',
         open ? 'translate-x-0' : '-translate-x-full'
       )}
     >
-      <div className="p-4">
+      <div className="p-4 flex-1">
         <motion.ul key={currentPath} variants={containerVariants} initial="hidden" animate="visible">
           {currentPath !== '/' && (currentPath === '/blog' || currentPath.startsWith('/blog/')) && (
             <motion.li variants={itemVariants}>
@@ -101,6 +103,27 @@ export default function Sidebar() {
             </motion.li>
           ))}
         </motion.ul>
+      </div>
+
+      <div className="border-t border-border/60 p-4">
+        {status === 'loading' ? null : session?.user ? (
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="group flex w-full items-center gap-2 rounded-md bg-muted/40 px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" strokeWidth={2} />
+            <span>로그아웃</span>
+          </button>
+        ) : (
+          <Link
+            href="/auth"
+            className="group flex items-center gap-2 rounded-md bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+          >
+            <LogIn className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2} />
+            <span>로그인</span>
+          </Link>
+        )}
       </div>
     </aside>
   );

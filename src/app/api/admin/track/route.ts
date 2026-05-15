@@ -18,9 +18,9 @@ export async function GET() {
 
   const sb = supabaseAdmin();
   const { data, error } = await sb
-    .from('series')
-    .select('id, series_name, description, thumbnail_url')
-    .order('series_name', { ascending: true });
+    .from('track')
+    .select('id, track_name, description, thumbnail_url')
+    .order('track_name', { ascending: true });
 
   if (error) {
     console.error(error);
@@ -45,13 +45,13 @@ export async function POST(req: Request) {
 
   const sb = supabaseAdmin();
   const { data, error } = await sb
-    .from('series')
+    .from('track')
     .insert({
-      series_name: name,
+      track_name: name,
       description: body.description?.trim() || null,
       thumbnail_url: body.thumbnail_url?.trim() || null,
     })
-    .select('id, series_name, description, thumbnail_url')
+    .select('id, track_name, description, thumbnail_url')
     .single();
 
   if (error) {

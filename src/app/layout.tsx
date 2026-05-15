@@ -1,17 +1,11 @@
 import './globals.css';
 import MyThemeProvider from '@/components/provider/ThemeProvider';
-import { Header } from '@/components/nav/Header';
-import { Footer } from '@/components/footer/Footer';
 import { ScrollProvider } from '@/components/provider/ScrollProvider';
 import { Metadata } from 'next';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
-import { Suspense } from 'react';
-import Loading from './loading';
 import { SessionProvider } from 'next-auth/react';
 import { SidebarProvider } from '@/components/provider/SidebarProvider';
-import Main from '@/components/layout/Main';
 import { TocProvider } from '@/components/provider/TocProvider';
-import Sidebar from '@/components/nav/Sidebar';
 import ScrollTopOnNavFlag from '@/components/common/ScrollTopOnNavFlag';
 import { Toaster as SonnerToaster } from 'sonner';
 
@@ -51,12 +45,7 @@ export default function RootLayout({
               <SessionProvider>
                 <SidebarProvider>
                   <ScrollTopOnNavFlag />
-                  <Header />
-                  <Suspense fallback={<Loading />}>
-                    <Sidebar />
-                    <Main>{children}</Main>
-                  </Suspense>
-                  <Footer />
+                  {children}
                 </SidebarProvider>
                 <SonnerToaster richColors position="top-center" />
               </SessionProvider>

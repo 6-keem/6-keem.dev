@@ -18,7 +18,7 @@ type UploadResponse = { url: string; path: string };
 export default function WriteClient({ postId }: WriteClientProps) {
   const router = useRouter();
 
-  const [meta, setMeta] = useState<PostMeta>({ title: '', tags: [], desc: '', seriesId: null, seriesName: '', thumbnailUrl: '', category: '', isHero: false });
+  const [meta, setMeta] = useState<PostMeta>({ title: '', tags: [], desc: '', trackId: null, trackName: '', thumbnailUrl: '', category: '', isHero: false });
   const [content, setContent] = useState<string>(``);
 
   const metaRef = useRef(meta);

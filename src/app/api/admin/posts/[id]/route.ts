@@ -31,7 +31,7 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
     category,
     date,
     thumbnail,
-    series_id,
+    track_id,
     published,
     post_detail:post_detail!post_detail_post_id_fkey (
       content,
@@ -39,9 +39,9 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
       created_at,
       updated_at
     ),
-    series:series_id (
+    track:track_id (
       id,
-      series_name
+      track_name
     )
   `
     )
@@ -63,8 +63,8 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
     desc: data.description ?? '',
     category: data.category ?? '',
     tags: detail?.tag ?? [],
-    seriesId: data.series_id ?? null,
-    seriesName: (data.series as any)?.series_name ?? '',
+    trackId: data.track_id ?? null,
+    trackName: (data.track as any)?.track_name ?? '',
     thumbnailUrl: data.thumbnail ?? '',
     isHero: !!heroRow,
   };
@@ -80,11 +80,37 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
         id: data.id,
         published: data.published,
         date: data.date,
-        seriesId: data.series_id,
+        trackId: data.track_id,
       },
     },
     { status: 200 }
   );
+}
+
+export async function DELETE(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail || session?.user?.email !== adminEmail) return unauthorized();
+
+  const { id: idRaw } = await context.params;
+  const id = Number(idRaw);
+  if (!Number.isFinite(id)) return badRequest('Invalid id');
+
+  const sb = supabaseAdmin();
+
+  const { error: detailErr } = await sb.from('post_detail').delete().eq('post_id', id);
+  if (detailErr) {
+    console.error(detailErr);
+    return NextResponse.json({ message: detailErr.message }, { status: 500 });
+  }
+
+  const { error: postErr } = await sb.from('post').delete().eq('id', id);
+  if (postErr) {
+    console.error(postErr);
+    return NextResponse.json({ message: postErr.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true }, { status: 200 });
 }
 
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
@@ -109,13 +135,13 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       desc: string;
       category: string;
       tags: string[];
-      seriesId?: number | null;
+      trackId?: number | null;
       thumbnailUrl?: string;
       isHero?: boolean;
     };
 
     const sb = supabaseAdmin();
-    const seriesId = meta.seriesId ?? null;
+    const trackId = meta.trackId ?? null;
 
     const { error: postErr } = await sb
       .from('post')
@@ -124,7 +150,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
         description: meta.desc ?? '',
         category: meta.category ?? '',
         thumbnail: meta.thumbnailUrl ?? '',
-        series_id: seriesId,
+        track_id: trackId,
         published,
         updated_at: new Date().toISOString(),
       })

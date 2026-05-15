@@ -2,8 +2,8 @@ export type PostMeta = {
   title: string;
   tags: string[];
   desc: string;
-  seriesId: number | null;
-  seriesName: string;
+  trackId: number | null;
+  trackName: string;
   category: string;
   thumbnailUrl?: string;
   isHero: boolean;
