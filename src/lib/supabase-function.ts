@@ -9,15 +9,24 @@ export async function getCategoryList() {
   return data;
 }
 
+function formatPostDate(raw: string): string {
+  return new Date(raw)
+    .toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Seoul',
+    })
+    .replaceAll('/', '-');
+}
+
 function mapPostRow(item: any): Post {
   return {
     id: item.post.id,
     title: item.post.title,
     category: item.post.category,
     description: item.post.description,
-    date: new Date(item.post.date)
-      .toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      .replaceAll('/', '-'),
+    date: formatPostDate(item.post.date),
     trackId: item.post.series_id ?? null,
     thumbnail: item.post.thumbnail,
     content: item.post_detail?.content ?? '',
@@ -62,6 +71,21 @@ export async function getRandomPosts(p_limit: number = 5): Promise<Post[]> {
   const { data, error } = await supabase.rpc('get_random_posts', { p_limit });
   if (error) throw error;
   return (data ?? []).map(mapPostRow);
+}
+
+export async function getHotPosts(p_limit: number = 5, p_window_days: number = 7): Promise<Post[]> {
+  const { data, error } = await supabase.rpc('get_hot_posts', { p_limit, p_window_days });
+  if (error) throw error;
+  return (data ?? []).map(mapPostRow);
+}
+
+export async function getPostsIndex(): Promise<{ category: string; slug: string }[]> {
+  const { data, error } = await supabase.rpc('get_posts_index');
+  if (error) throw error;
+  return (data ?? []).map((row: { category: string; post_date: string }) => ({
+    category: row.category,
+    slug: formatPostDate(row.post_date),
+  }));
 }
 
 export async function getPostDetail(filter_category: string, filter_date: string) {

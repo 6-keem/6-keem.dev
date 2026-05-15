@@ -1,14 +1,14 @@
 import {
   getHeroPosts,
+  getHotPosts,
   getPostsCount,
   getPostsLazy,
-  getRandomPosts,
   getTrackSummary,
 } from '@/lib/supabase-function';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
 import TrackSection, { TrackCardData } from './blog/TrackSection';
-import RandomPicks from './blog/RandomPicks';
+import HotPicks from './blog/HotPicks';
 
 const PAGE_SIZE = 5;
 
@@ -34,16 +34,17 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const safePage = Math.max(1, page);
   const offset = (safePage - 1) * PAGE_SIZE;
 
-  const [pagePosts, totalCount, heroPosts, randomPicks, tracks] = await Promise.all([
+  const [pagePosts, totalCount, heroPosts, hotPicks, tracks] = await Promise.all([
     getPostsLazy(category, PAGE_SIZE, offset),
     getPostsCount(category),
     getHeroPosts(),
-    isRoot ? getRandomPosts(5) : Promise.resolve([]),
+    getHotPosts(5),
     isRoot ? loadTrackCards() : Promise.resolve([]),
   ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const basePath = category ? `/blog/${category}` : '/blog';
   const recommendedIds = new Set(heroPosts.map((p) => p.id));
+  const hotIds = new Set(hotPicks.map((p) => p.id));
 
   return (
     <>
@@ -60,10 +61,11 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
                 totalPages={totalPages}
                 basePath={basePath}
                 recommendedIds={recommendedIds}
+                hotIds={hotIds}
               />
             </main>
             <aside className="lg:sticky lg:top-24">
-              <RandomPicks posts={randomPicks} />
+              <HotPicks posts={hotPicks} />
             </aside>
           </div>
         ) : (
@@ -75,6 +77,7 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
               totalPages={totalPages}
               basePath={basePath}
               recommendedIds={recommendedIds}
+              hotIds={hotIds}
             />
           </main>
         )}

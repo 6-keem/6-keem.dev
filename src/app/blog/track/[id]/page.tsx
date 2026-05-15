@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Layers } from 'lucide-react';
 import ArticleList from '@/components/post_list/blog/ArticleList';
+import TrackHeader from '@/components/post_list/blog/TrackHeader';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
-import { getHeroPosts, getTrackDetail, getTrackPosts } from '@/lib/supabase-function';
+import { getHeroPosts, getHotPosts, getTrackDetail, getTrackPosts } from '@/lib/supabase-function';
 
 type Props = Promise<{ id: string }>;
 
@@ -31,48 +31,29 @@ const TrackPage = async ({ params }: { params: Props }) => {
   const trackId = Number(id);
   if (!Number.isFinite(trackId)) notFound();
 
-  const [detail, posts, heroPosts] = await Promise.all([
+  const [detail, posts, heroPosts, hotPosts] = await Promise.all([
     getTrackDetail(trackId),
     getTrackPosts(trackId),
     getHeroPosts(),
+    getHotPosts(5),
   ]);
   if (!detail) notFound();
 
   const recommendedIds = new Set(heroPosts.map((p) => p.id));
-  // newest first for the listing.
+  const hotIds = new Set(hotPosts.map((p) => p.id));
   const orderedPosts = [...posts].sort((a, b) => b.date.toString().localeCompare(a.date.toString()));
 
   return (
     <>
-      <section className="mx-auto mt-12 w-full max-w-[1130px] px-4 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden">
-          <div className="aspect-square bg-secondary flex items-center justify-center">
-            {detail.thumbnailUrl ? (
-              <img src={detail.thumbnailUrl} alt={detail.trackName} className="w-full h-full object-cover" />
-            ) : (
-              <Layers className="w-20 h-20 text-muted-foreground/50" />
-            )}
-          </div>
-          <div className="bg-muted p-8 md:p-10 flex flex-col">
-            <div className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
-              <Layers className="w-4 h-4" />
-              Track
-            </div>
-            <h1 className="mt-4 text-3xl md:text-4xl font-extrabold text-foreground leading-tight tracking-tight">
-              {detail.trackName}
-            </h1>
-            <div className="mt-auto pt-8">
-              {detail.description && (
-                <p className="text-sm text-foreground/80 leading-relaxed mb-3">{detail.description}</p>
-              )}
-              <p className="text-sm text-muted-foreground">아티클 {posts.length}개</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <TrackHeader
+        trackName={detail.trackName}
+        description={detail.description}
+        thumbnailUrl={detail.thumbnailUrl ?? '/gallery/japan/2023-7/himeji.jpg'}
+        postCount={posts.length}
+      />
 
       <section className="mx-auto mt-16 mb-24 w-full max-w-[1130px] px-4 md:px-12">
-        <ArticleList posts={orderedPosts} title="에피소드" recommendedIds={recommendedIds} />
+        <ArticleList posts={orderedPosts} title="에피소드" recommendedIds={recommendedIds} hotIds={hotIds} />
       </section>
     </>
   );
