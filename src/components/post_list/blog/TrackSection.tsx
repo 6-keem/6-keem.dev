@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ScrollTopLink from '@/components/common/ScrollTopLink';
 
 export interface TrackCardData {
   id: number;
@@ -11,7 +11,7 @@ export interface TrackCardData {
 
 function TrackCard({ data }: { data: TrackCardData }) {
   return (
-    <Link
+    <ScrollTopLink
       href={data.href}
       className="group bg-muted rounded-[20px] p-4 flex flex-col cursor-pointer"
     >
@@ -35,7 +35,7 @@ function TrackCard({ data }: { data: TrackCardData }) {
       <span className="mt-auto inline-block bg-background rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground self-start mx-1">
         에피소드 {data.count}개
       </span>
-    </Link>
+    </ScrollTopLink>
   );
 }
 
