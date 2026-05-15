@@ -32,7 +32,7 @@ export default function Sidebar() {
   const { open } = useSidebar();
   const currentPath = usePathname();
   const navItems = [
-    { path: '/blog', label: '블로그' },
+    { path: '/', label: '블로그' },
     { path: '/gallery', label: '갤러리' },
     { path: '/about', label: '프로필' },
   ];
@@ -40,20 +40,20 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed top-14 bottom-8 left-0 z-10 h-screen w-48 pt-28 bg-background',
+        'fixed top-14 bottom-8 left-0 z-30 h-screen w-48 pt-28 bg-background',
         'transition-transform duration-300 ease-in-out',
         open ? 'translate-x-0' : '-translate-x-full'
       )}
     >
       <div className="p-4">
         <motion.ul key={currentPath} variants={containerVariants} initial="hidden" animate="visible">
-          {currentPath.split('/').length !== 2 && currentPath.includes('blog') && (
+          {currentPath !== '/' && (currentPath === '/blog' || currentPath.startsWith('/blog/')) && (
             <motion.li variants={itemVariants}>
               <Link
-                href={'/blog'}
-                key={'/blog'}
+                href={'/'}
+                key={'/'}
                 onClick={(e) => {
-                  if (currentPath === '/blog') {
+                  if (currentPath === '/') {
                     e.preventDefault();
                   }
                 }}
@@ -79,7 +79,7 @@ export default function Sidebar() {
               <Link
                 href={item.path}
                 onClick={(e) => {
-                  if (currentPath === item.path && item.path !== '/blog') {
+                  if (currentPath === item.path && item.path !== '/') {
                     e.preventDefault();
                   }
                 }}

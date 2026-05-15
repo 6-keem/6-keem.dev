@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  async redirects() {
+    return [
+      // Root now serves the blog landing — preserve old /blog backlinks.
+      { source: '/blog', destination: '/', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,4 +1,5 @@
 import { GithubIcon, PanelLeft } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '../ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { usePathname } from 'next/navigation';
@@ -23,8 +24,8 @@ export const NavbarContent = () => {
   return (
     <div className="flex h-[64px] w-full items-center justify-between px-5 md:px-8 z-20 bg-background">
       <div className="flex space-x-4">
-        <Link href={'/blog'}>
-          <p className="font-bold text-2xl">KEEM</p>
+        <Link href={'/blog'} aria-label="6-keem.dev" className="flex items-center">
+          <Image src="/icon.svg" alt="" width={28} height={28} priority />
         </Link>
         <Button
           onClick={toggle}

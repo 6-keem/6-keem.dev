@@ -6,6 +6,7 @@ import { Thumbnail } from './Thumbnail';
 import { Highlight } from './Highlight';
 import CodeBlock from './CodeBlock';
 import { Quotation } from './Quotation';
+import { YouTube } from './YouTube';
 
 export const MDXComponent: MDXComponents = {
   a: ExternalLink as any,
@@ -15,5 +16,7 @@ export const MDXComponent: MDXComponents = {
   Thumbnail: Thumbnail,
   Highlight: Highlight,
   pre: (props: any) => <CodeBlock {...props} />,
-  Quotation
+  Quotation,
+  YouTube,
+  Youtube: YouTube,
 };

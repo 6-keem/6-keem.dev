@@ -1,4 +1,3 @@
-import { nextui } from '@nextui-org/theme';
 import type { Config } from 'tailwindcss';
 
 const config = {
@@ -7,7 +6,6 @@ const config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@nextui-org/theme/dist/components/spinner.js',
   ],
   prefix: '',
   theme: {
@@ -74,6 +72,20 @@ const config = {
           unselected: 'var(--text-unselected)',
           hovered: 'var(--text-hovered)',
         },
+        brand: {
+          DEFAULT: 'var(--brand)',
+          foreground: 'var(--brand-foreground)',
+          soft: 'var(--brand-soft)',
+        },
+        recommend: {
+          DEFAULT: 'var(--recommend)',
+          soft: 'var(--recommend-soft)',
+        },
+        hot: {
+          DEFAULT: 'var(--hot)',
+          soft: 'var(--hot-soft)',
+        },
+        'title-hover': 'var(--title-hover)',
       },
       typography: {
         DEFAULT: {
@@ -217,7 +229,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography'), nextui()],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 } satisfies Config;
 
 export default config;

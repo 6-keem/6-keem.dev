@@ -3,7 +3,6 @@ import MyThemeProvider from '@/components/provider/ThemeProvider';
 import { Header } from '@/components/nav/Header';
 import { Footer } from '@/components/footer/Footer';
 import { ScrollProvider } from '@/components/provider/ScrollProvider';
-import { GlowBackground } from '@/components/GlowBackground';
 import { Metadata } from 'next';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { Suspense } from 'react';
@@ -13,6 +12,7 @@ import { SidebarProvider } from '@/components/provider/SidebarProvider';
 import Main from '@/components/layout/Main';
 import { TocProvider } from '@/components/provider/TocProvider';
 import Sidebar from '@/components/nav/Sidebar';
+import ScrollTopOnNavFlag from '@/components/common/ScrollTopOnNavFlag';
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = blogName;
@@ -21,6 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title,
+    icons: {
+      icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    },
     openGraph: {
       title,
       url,
@@ -46,6 +49,7 @@ export default function RootLayout({
             <ScrollProvider>
               <SessionProvider>
                 <SidebarProvider>
+                  <ScrollTopOnNavFlag />
                   <Header />
                   <Suspense fallback={<Loading />}>
                     <Sidebar />

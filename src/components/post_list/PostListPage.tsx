@@ -1,35 +1,90 @@
-import React from 'react';
-import CategoryList from './CategoryList';
-import PostCard from './PostCard';
-import { auth } from '@/lib/auth';
-import { Post } from '@/config/types';
-import { Session } from 'next-auth';
-import { getCategoryList, getPosts } from '@/lib/supabase-function';
+import {
+  getHeroPosts,
+  getHotPosts,
+  getPostsCount,
+  getPostsLazy,
+  getTrackSummary,
+} from '@/lib/supabase-function';
+import HeroSlider from './blog/HeroSlider';
+import PaginatedArticleList from './blog/PaginatedArticleList';
+import TrackSection, { TrackCardData } from './blog/TrackSection';
+import HotPicks from './blog/HotPicks';
+
+const PAGE_SIZE = 5;
 
 interface PostListProps {
   category?: string;
+  page?: number;
 }
 
-const PostListPage = async ({ category }: PostListProps) => {
-  const postList: Post[] = await getPosts(category);
-  const categoryList: string[] = await getCategoryList();
+async function loadTrackCards(): Promise<TrackCardData[]> {
+  const summary = await getTrackSummary();
+  return summary.map((t) => ({
+    id: t.id,
+    name: t.trackName,
+    description: t.description ?? t.firstPostDescription,
+    count: t.postCount,
+    thumbnail: t.thumbnailUrl ?? t.firstPostThumbnail,
+    href: `/blog/track/${t.id}`,
+  } satisfies TrackCardData));
+}
 
-  const allPostCount = postList.length;
+const PostListPage = async ({ category, page = 1 }: PostListProps) => {
+  const isRoot = !category;
+  const safePage = Math.max(1, page);
+  const offset = (safePage - 1) * PAGE_SIZE;
+
+  const [pagePosts, totalCount, heroPosts, hotPicks, tracks] = await Promise.all([
+    getPostsLazy(category, PAGE_SIZE, offset),
+    getPostsCount(category),
+    getHeroPosts(),
+    getHotPosts(5),
+    isRoot ? loadTrackCards() : Promise.resolve([]),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const basePath = category ? `/blog/${category}` : '/blog';
+  const recommendedIds = new Set(heroPosts.map((p) => p.id));
+  const hotIds = new Set(hotPicks.map((p) => p.id));
 
   return (
-    <section className="mx-auto mt-12 w-full max-w-[1130px] px-4 md:px-12 flex flex-col gap-y-2">
-      <div className="flex justify-between">
-        <CategoryList allPostCount={allPostCount} categoryList={categoryList} currentCategory={category} />
-      </div>
+    <>
+      {isRoot && <HeroSlider posts={heroPosts} />}
 
-      <section>
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4 mt-8">
-          {postList.map((post, index) => (
-            <PostCard key={index} post={post} />
-          ))}
-        </ul>
+      <section className="mx-auto mt-20 md:mt-24 w-full max-w-[1130px] px-4 md:px-12">
+        {isRoot ? (
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_308px] gap-10 lg:gap-16 items-start">
+            <main className="min-w-0">
+              <PaginatedArticleList
+                posts={pagePosts}
+                category={category}
+                currentPage={safePage}
+                totalPages={totalPages}
+                basePath={basePath}
+                recommendedIds={recommendedIds}
+                hotIds={hotIds}
+              />
+            </main>
+            <aside className="lg:sticky lg:top-24">
+              <HotPicks posts={hotPicks} />
+            </aside>
+          </div>
+        ) : (
+          <main>
+            <PaginatedArticleList
+              posts={pagePosts}
+              category={category}
+              currentPage={safePage}
+              totalPages={totalPages}
+              basePath={basePath}
+              recommendedIds={recommendedIds}
+              hotIds={hotIds}
+            />
+          </main>
+        )}
       </section>
-    </section>
+
+      {isRoot && <TrackSection tracks={tracks} />}
+    </>
   );
 };
 
