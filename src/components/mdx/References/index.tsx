@@ -77,7 +77,7 @@ export const References = ({
     const showNumbers = isTruthyBool(numbered);
 
     return (
-        <section className="my-10 border-t border-foreground-100 pt-6">
+        <section className="not-prose my-10 border-t border-foreground-100 pt-6">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 {title}
             </h2>
