@@ -81,7 +81,7 @@ export const References = ({
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 {title}
             </h2>
-            <ol className="flex flex-col gap-3">
+            <ol className="m-0 flex list-none flex-col gap-3 p-0">
                 {resolved.map((item, idx) => {
                     const meta = [item.author, item.site, item.date]
                         .filter(Boolean)
@@ -89,10 +89,7 @@ export const References = ({
                     return (
                         <li
                             key={`${item.url}-${idx}`}
-                            className={cn(
-                                "flex gap-3 text-sm leading-relaxed",
-                                !showNumbers && "list-none"
-                            )}
+                            className="m-0 flex list-none gap-3 p-0 text-sm leading-relaxed before:hidden marker:hidden"
                         >
                             <span
                                 className={cn(
