@@ -15,6 +15,8 @@ interface WriteClientProps {
 
 type UploadResponse = { url: string; path: string };
 
+const DRAFT_KEY = (postId: string | null) => `editor-draft:${postId ?? 'new'}`;
+
 export default function WriteClient({ postId }: WriteClientProps) {
   const router = useRouter();
 
@@ -23,6 +25,7 @@ export default function WriteClient({ postId }: WriteClientProps) {
 
   const metaRef = useRef(meta);
   const contentRef = useRef(content);
+  const draftRestoredRef = useRef(false);
 
   const thumb = useThumbnail();
 
@@ -77,23 +80,67 @@ export default function WriteClient({ postId }: WriteClientProps) {
   }, [content]);
 
   useEffect(() => {
-    if (!postId) return;
+    if (postId) {
+      (async () => {
+        const res = await fetch(`/api/admin/posts/${postId}`, { method: 'GET' });
+        if (!res.ok) {
+          toast.error('게시글을 불러오지 못했어요');
+          return;
+        }
+        const data = await res.json();
 
-    (async () => {
-      const res = await fetch(`/api/admin/posts/${postId}`, { method: 'GET' });
-      if (!res.ok) {
-        toast.error('게시글을 불러오지 못했어요');
-        return;
+        setMeta(data.meta);
+        setContent(data.content);
+
+        const thumbUrl = data.meta?.thumbnailUrl || data.thumbnailUrl || '';
+        thumb.setThumbnailPreview?.(thumbUrl);
+        draftRestoredRef.current = true;
+      })();
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY(null));
+      if (raw) {
+        const parsed = JSON.parse(raw) as { meta: PostMeta; content: string; savedAt: number };
+        if (parsed?.meta && typeof parsed.content === 'string') {
+          setMeta(parsed.meta);
+          setContent(parsed.content);
+          if (parsed.meta.thumbnailUrl) thumb.setThumbnailPreview?.(parsed.meta.thumbnailUrl);
+          toast.success('이전 작성 중이던 글을 복원했어요', {
+            action: {
+              label: '버리기',
+              onClick: () => {
+                localStorage.removeItem(DRAFT_KEY(null));
+                setMeta({ title: '', tags: [], desc: '', trackId: null, trackName: '', thumbnailUrl: '', category: '', isHero: false });
+                setContent('');
+                thumb.setThumbnailPreview?.('');
+              },
+            },
+          });
+        }
       }
-      const data = await res.json();
-
-      setMeta(data.meta);
-      setContent(data.content);
-
-      const thumbUrl = data.meta?.thumbnailUrl || data.thumbnailUrl || '';
-      thumb.setThumbnailPreview?.(thumbUrl);
-    })();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      draftRestoredRef.current = true;
+    }
   }, [postId]);
+
+  useEffect(() => {
+    if (!draftRestoredRef.current) return;
+    const handle = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY(postId),
+          JSON.stringify({ meta, content, savedAt: Date.now() })
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }, 500);
+    return () => clearTimeout(handle);
+  }, [meta, content, postId]);
 
   const insertAtCursor = (markdown: string) => {
     const el = document.querySelector<HTMLTextAreaElement>('#post-content-textarea');
@@ -162,6 +209,12 @@ export default function WriteClient({ postId }: WriteClientProps) {
         console.error(await res.text());
         toast.error(postId ? '게시글 저장(수정)이 실패했어요' : '게시글 저장이 실패했어요');
         return false;
+      }
+
+      try {
+        localStorage.removeItem(DRAFT_KEY(postId));
+      } catch (e) {
+        console.error(e);
       }
 
       toast.success(published ? (postId ? '수정 완료!' : '게시 완료!') : '임시저장 완료!');

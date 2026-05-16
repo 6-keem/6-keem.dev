@@ -11,6 +11,7 @@ export interface PostInfo {
   date: string;
   trackId: number | null;
   thumbnail: string;
+  published?: boolean;
 }
 
 export interface PostDetail {

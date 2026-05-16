@@ -6,6 +6,7 @@ import { PostFooter } from '@/components/post_detail/PostFooter';
 import { PostHeader } from '@/components/post_detail/PostHeader';
 import ViewTracker from '@/components/post_detail/ViewTracker';
 import { TocRegistrar } from '@/components/post_list/TocRegister';
+import { checkPermission } from '@/lib/auth';
 import { baseDomain, blogName, blogThumbnailURL } from '@/config/const';
 import { parseToc } from '@/lib/post';
 import {
@@ -31,7 +32,8 @@ export async function generateMetadata({ params }: { params: Props }): Promise<M
   const { category, slug } = await params;
   const decodedCategory = decodeURIComponent(category);
   const decodedSlug = decodeURIComponent(slug);
-  const detail = await getPostDetail(decodedCategory, decodedSlug);
+  const isAdmin = await checkPermission();
+  const detail = await getPostDetail(decodedCategory, decodedSlug, { includeUnpublished: isAdmin });
   const post = detail[0];
   if (!post) {
     return { title: blogName };
@@ -66,8 +68,9 @@ const PostDetail = async ({ params }: { params: Props }) => {
   const category = decodeURIComponent((await params).category);
   const slug = decodeURIComponent((await params).slug);
 
+  const isAdmin = await checkPermission();
   const [detail, heroPosts, hotPosts] = await Promise.all([
-    getPostDetail(category, slug),
+    getPostDetail(category, slug, { includeUnpublished: isAdmin }),
     getHeroPosts(),
     getHotPosts(5),
   ]);

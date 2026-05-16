@@ -5,6 +5,7 @@ import {
   getPostsLazy,
   getTrackSummary,
 } from '@/lib/supabase-function';
+import { checkPermission } from '@/lib/auth';
 import HeroSlider from './blog/HeroSlider';
 import PaginatedArticleList from './blog/PaginatedArticleList';
 import TrackSection, { TrackCardData } from './blog/TrackSection';
@@ -34,9 +35,11 @@ const PostListPage = async ({ category, page = 1 }: PostListProps) => {
   const safePage = Math.max(1, page);
   const offset = (safePage - 1) * PAGE_SIZE;
 
+  const isAdmin = await checkPermission();
+  const adminOpts = { includeUnpublished: isAdmin };
   const [pagePosts, totalCount, heroPosts, hotPicks, tracks] = await Promise.all([
-    getPostsLazy(category, PAGE_SIZE, offset),
-    getPostsCount(category),
+    getPostsLazy(category, PAGE_SIZE, offset, adminOpts),
+    getPostsCount(category, adminOpts),
     getHeroPosts(),
     getHotPosts(5),
     isRoot ? loadTrackCards() : Promise.resolve([]),

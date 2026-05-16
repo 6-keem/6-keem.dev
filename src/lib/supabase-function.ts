@@ -1,5 +1,13 @@
 import { Post } from '@/config/types';
-import { supabase } from './supabase';
+import { supabase, supabaseAdmin } from './supabase';
+
+type AdminOpts = { includeUnpublished?: boolean };
+
+function mapJoinedRow(row: any): Post {
+  const { post_detail, ...post } = row;
+  const detail = Array.isArray(post_detail) ? post_detail[0] : post_detail;
+  return mapPostRow({ post, post_detail: detail });
+}
 
 interface PostRow {
   id: number;
@@ -73,6 +81,7 @@ function mapPostRow(item: PostRpcRow): Post {
     date: formatPostDate(item.post.date),
     trackId: item.post.track_id ?? null,
     thumbnail: item.post.thumbnail ?? '',
+    published: item.post.published,
     content: item.post_detail?.content ?? '',
     tag: item.post_detail?.tag ?? [],
     post_id: item.post_detail?.post_id ?? item.post.id,
@@ -87,7 +96,16 @@ export async function getPosts(filter_category?: string): Promise<Post[]> {
   return ((data ?? []) as PostRpcRow[]).map(mapPostRow);
 }
 
-export async function getPostsCount(filter_category?: string): Promise<number> {
+export async function getPostsCount(filter_category?: string, opts?: AdminOpts): Promise<number> {
+  if (opts?.includeUnpublished) {
+    const sb = supabaseAdmin();
+    let q = sb.from('post').select('id', { count: 'exact', head: true });
+    if (filter_category) q = q.eq('category', filter_category);
+    const { count, error } = await q;
+    if (error) throw error;
+    return count ?? 0;
+  }
+
   const { data, error } = await supabase.rpc('get_posts_count', {
     filter_category: filter_category ?? null,
   });
@@ -99,7 +117,22 @@ export async function getPostsLazy(
   filter_category?: string,
   limit: number = 12,
   offset: number = 0,
+  opts?: AdminOpts,
 ): Promise<Post[]> {
+  if (opts?.includeUnpublished) {
+    const sb = supabaseAdmin();
+    let q = sb
+      .from('post')
+      .select('*, post_detail:post_detail!post_detail_post_id_fkey(*)')
+      .order('date', { ascending: false })
+      .order('id', { ascending: false })
+      .range(offset, offset + limit - 1);
+    if (filter_category) q = q.eq('category', filter_category);
+    const { data, error } = await q;
+    if (error) throw error;
+    return (data ?? []).map(mapJoinedRow);
+  }
+
   const { data, error } = await supabase.rpc('get_posts_lazy', {
     filter_category: filter_category ?? null,
     p_limit: limit,
@@ -130,10 +163,27 @@ export async function getPostsIndex(): Promise<{ category: string; slug: string 
   }));
 }
 
-export async function getPostDetail(filter_category: string, filter_date: string): Promise<Post[]> {
+export async function getPostDetail(
+  filter_category: string,
+  filter_date: string,
+  opts?: AdminOpts,
+): Promise<Post[]> {
+  const normalizedDate = filter_date ? filter_date.split('T')[0] : '';
+
+  if (opts?.includeUnpublished) {
+    const sb = supabaseAdmin();
+    const { data, error } = await sb
+      .from('post')
+      .select('*, post_detail:post_detail!post_detail_post_id_fkey(*)')
+      .eq('category', filter_category);
+    if (error) throw error;
+    const matched = (data ?? []).find((row: any) => formatPostDate(row.date) === normalizedDate);
+    return matched ? [mapJoinedRow(matched)] : [];
+  }
+
   const { data, error } = await supabase.rpc('get_post_detail', {
     filter_category,
-    filter_date: filter_date ? filter_date.split('T')[0] : null,
+    filter_date: normalizedDate || null,
   });
   if (error) throw error;
   return ((data ?? []) as PostRpcRow[]).map(mapPostRow);

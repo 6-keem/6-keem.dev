@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const { data, error } = await supabase.rpc('create_post', {
       title: meta.title,
       description: meta.desc ?? '',
-      category: meta.category ?? 'Daily',
+      category: meta.category?.trim() || 'Daily',
       date: new Date().toISOString(),
       track_id: trackId,
       thumbnail: meta.thumbnailUrl ?? '',

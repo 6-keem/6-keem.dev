@@ -17,6 +17,11 @@ export const PostHeader = ({ post, isRecommended = false, isHot = false }: Props
   return (
     <header className="my-14 text-center space-y-8">
       <div className="flex flex-wrap justify-center items-center gap-2">
+        {post.published === false && (
+          <span className="inline-flex items-center text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-md px-2 py-1 text-xs font-semibold uppercase tracking-wide">
+            Draft
+          </span>
+        )}
         {isRecommended && (
           <span className="inline-flex items-center text-recommend bg-recommend-soft rounded-md px-2 py-1" aria-label="recommended">
             <ThumbsUp className="h-4 w-4" />

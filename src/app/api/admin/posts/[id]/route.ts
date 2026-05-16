@@ -148,7 +148,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       .update({
         title: meta.title ?? '',
         description: meta.desc ?? '',
-        category: meta.category ?? '',
+        category: meta.category?.trim() || 'Daily',
         thumbnail: meta.thumbnailUrl ?? '',
         track_id: trackId,
         published,
