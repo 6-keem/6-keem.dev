@@ -3,6 +3,7 @@ import CalloutButton from './CalloutButton';
 import HighlightButton from './HighlightButton';
 import { ToolbarTooltipProvider } from './IconToolButton';
 import QuotationButton from './QuotationButton';
+import ReferencesButton from './ReferencesButton';
 import TableButton from './TableButton';
 import YouTubeButton from './YouTubeButton';
 
@@ -21,6 +22,7 @@ export default function EditorToolbar({ content, setContent, textareaId = 'post-
         <HighlightButton content={content} setContent={setContent} textareaId={textareaId} />
         <TableButton content={content} setContent={setContent} textareaId={textareaId} />
         <YouTubeButton content={content} setContent={setContent} textareaId={textareaId} />
+        <ReferencesButton content={content} setContent={setContent} textareaId={textareaId} />
       </div>
     </ToolbarTooltipProvider>
   );

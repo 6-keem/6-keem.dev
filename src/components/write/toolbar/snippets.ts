@@ -19,6 +19,15 @@ export function youtubeSnippet(id = 'VIDEO_ID') {
   return [`<YouTube id="${escapeAttr(id)}"></YouTube>`, ``].join('\n');
 }
 
+export function referencesSnippet() {
+  return [
+    `<References>`,
+    `  <Ref title="제목" url="https://example.com" author="" site="" date="" />`,
+    `</References>`,
+    ``,
+  ].join('\n');
+}
+
 export function highlightWrap(color: HighlightColor) {
   return {
     before: `<Highlight color="${color}">`,

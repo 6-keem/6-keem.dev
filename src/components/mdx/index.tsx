@@ -6,6 +6,7 @@ import { Thumbnail } from './Thumbnail';
 import { Highlight } from './Highlight';
 import CodeBlock from './CodeBlock';
 import { Quotation } from './Quotation';
+import { Ref, References } from './References';
 import { YouTube } from './YouTube';
 
 export const MDXComponent: MDXComponents = {
@@ -17,6 +18,8 @@ export const MDXComponent: MDXComponents = {
   Highlight: Highlight,
   pre: (props: any) => <CodeBlock {...props} />,
   Quotation,
+  References,
+  Ref,
   YouTube,
   Youtube: YouTube,
 };

@@ -10,6 +10,7 @@ import { PostMeta } from './types';
 import { Callout } from '@/components/mdx/Callout';
 import { Highlight } from '@/components/mdx/Highlight';
 import { Quotation } from '@/components/mdx/Quotation';
+import { Ref, References } from '@/components/mdx/References';
 import { YouTube } from '@/components/mdx/YouTube';
 import { escapeHtmlExceptCustom } from './toolbar/escapeHtmlExceptCustom';
 
@@ -21,13 +22,15 @@ type Props = {
 
 const schema = {
   ...defaultSchema,
-  tagNames: [...(defaultSchema.tagNames ?? []), 'callout', 'highlight', 'quotation', 'youtube'],
+  tagNames: [...(defaultSchema.tagNames ?? []), 'callout', 'highlight', 'quotation', 'youtube', 'references', 'ref'],
   attributes: {
     ...(defaultSchema.attributes ?? {}),
     callout: ['type', 'title', 'className'],
     highlight: ['color', 'className'],
     quotation: ['className'],
     youtube: ['id', 'title', 'start', 'className'],
+    references: ['numbered', 'title', 'className'],
+    ref: ['title', 'url', 'author', 'site', 'date'],
     img: ['src', 'alt', 'title', 'loading', 'className'],
     a: ['href', 'target', 'rel', 'title', 'className'],
   },
@@ -62,6 +65,16 @@ const markdownComponents = {
     const rawId = typeof props.id === 'string' ? props.id.replace(/^user-content-/, '') : props.id;
     return <YouTube id={rawId} title={props.title} start={props.start ? Number(props.start) : undefined} className={props.className} />;
   },
+
+  references: (props: any) => (
+    <References numbered={props.numbered} title={props.title}>
+      {props.children}
+    </References>
+  ),
+
+  ref: (props: any) => (
+    <Ref title={props.title} url={props.url} author={props.author} site={props.site} date={props.date} />
+  ),
 };
 
 function isBlockish(node: React.ReactNode) {
