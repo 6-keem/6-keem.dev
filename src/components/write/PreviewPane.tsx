@@ -109,7 +109,7 @@ function isBlockish(node: React.ReactNode) {
 
 export default function PreviewPane({ meta, content, thumbnailPreview }: Props) {
   const previewTitle = meta.title || '제목을 입력하세요';
-  const safeContent = useMemo(() => escapeHtmlExceptCustom(content, ['callout', 'highlight', 'quotation', 'youtube']), [content]);
+  const safeContent = useMemo(() => escapeHtmlExceptCustom(content, ['callout', 'highlight', 'quotation', 'youtube', 'references', 'ref']), [content]);
 
   return (
     <section className="h-full min-h-0 overflow-auto bg-background">
