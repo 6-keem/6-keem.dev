@@ -44,19 +44,24 @@ const isTruthyBool = (v: unknown) => {
 const collectFromChildren = (children: React.ReactNode): ReferenceItem[] => {
     const out: ReferenceItem[] = [];
 
-    Children.forEach(children, (child) => {
-        if (!isValidElement(child)) return;
-        const p = child.props as RefProps;
-        if (!p?.title || !p?.url) return;
-        out.push({
-            title: p.title,
-            url: p.url,
-            author: p.author,
-            site: p.site,
-            date: p.date,
+    const walk = (node: React.ReactNode) => {
+        Children.forEach(node, (child) => {
+            if (!isValidElement(child)) return;
+            const p = child.props as RefProps & { children?: React.ReactNode };
+            if (p?.title && p?.url) {
+                out.push({
+                    title: p.title,
+                    url: p.url,
+                    author: p.author,
+                    site: p.site,
+                    date: p.date,
+                });
+            }
+            if (p?.children) walk(p.children);
         });
-    });
+    };
 
+    walk(children);
     return out;
 };
 

@@ -22,7 +22,7 @@ export function youtubeSnippet(id = 'VIDEO_ID') {
 export function referencesSnippet() {
   return [
     `<References>`,
-    `  <Ref title="제목" url="https://example.com" author="" site="" date="" />`,
+    `  <Ref title="제목" url="https://example.com" author="" site="" date=""></Ref>`,
     `</References>`,
     ``,
   ].join('\n');
