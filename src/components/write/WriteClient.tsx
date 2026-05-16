@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PostMeta } from './types';
 import EditorPane from './EditorPane';
 import PreviewPane from './PreviewPane';
+import PublishConfirmDialog from './PublishConfirmDialog';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -233,9 +234,22 @@ export default function WriteClient({ postId }: WriteClientProps) {
     return () => clearInterval(id);
   }, [save]);
 
-  const onPublish = async () => {
-    const ok = await save(true);
-    if (ok) router.push('/');
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+
+  const onPublish = () => setPublishOpen(true);
+
+  const confirmPublish = async () => {
+    setPublishing(true);
+    try {
+      const ok = await save(true);
+      if (ok) {
+        setPublishOpen(false);
+        router.push('/');
+      }
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const onTempSave = async () => {
@@ -276,6 +290,14 @@ export default function WriteClient({ postId }: WriteClientProps) {
 
         <PreviewPane meta={meta} content={content} thumbnailPreview={thumb.thumbnailPreview} />
       </div>
+
+      <PublishConfirmDialog
+        open={publishOpen}
+        onOpenChange={(v) => !publishing && setPublishOpen(v)}
+        onConfirm={confirmPublish}
+        isUpdate={!!postId}
+        loading={publishing}
+      />
     </main>
   );
 }
