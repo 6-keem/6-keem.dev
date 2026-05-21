@@ -12,10 +12,7 @@ export const PostFooter = async ({ currentPost }: Props) => {
   let trackName: string | null = null;
   let trackDescription: string | null = null;
   if (currentPost.trackId) {
-    const [posts, detail] = await Promise.all([
-      getTrackPosts(currentPost.trackId),
-      getTrackDetail(currentPost.trackId),
-    ]);
+    const [posts, detail] = await Promise.all([getTrackPosts(currentPost.trackId), getTrackDetail(currentPost.trackId)]);
     trackPosts = posts;
     trackName = detail?.trackName ?? null;
     trackDescription = detail?.description ?? null;
